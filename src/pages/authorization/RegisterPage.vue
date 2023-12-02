@@ -5,6 +5,7 @@
       src="~assets/quasar-logo-vertical.svg"
       style="width: 200px; height: 200px"
     />
+    <h2>注册</h2>
   </q-page>
 </template>
 
@@ -12,6 +13,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "IndexPage",
+  name: "RegisterPage",
 });
 </script>
