@@ -8,7 +8,7 @@
         label="账号 *"
         hint=""
         lazy-rules
-        :rules="[(val) => (val && val.length > 2) || '不能小于2位']"
+        :rules="[(val) => (val && val.length >= 2) || '不能小于2位']"
       />
 
       <q-input
@@ -39,7 +39,11 @@
 <script>
 import { defineComponent, ref } from "vue";
 import { Notify } from "quasar";
-import NotifyUtil from "../../tools/notify.js";
+import {
+  loadingNotify,
+  successNotify,
+  errorNotify,
+} from "../../tools/notify.js";
 import { loginAjax } from "../../apis/authorization.js";
 
 export default defineComponent({
@@ -53,19 +57,19 @@ export default defineComponent({
   },
   methods: {
     fnLogin() {
-      const loading = new NotifyUtil().loading("登录中……");
+      const loading = loadingNotify("登录中……");
 
       loginAjax({
         username: this.username,
         password: this.password,
       })
         .then((res) => {
-          loading();
           let { raw, json } = res;
           if (raw.token) {
+            loading();
             localStorage.setItem("authorization.token", raw.token);
             localStorage.setItem("authorization.user", json);
-            new NotifyUtil().success(
+            successNotify(
               "登录成功",
               500,
               (router) => {
@@ -73,17 +77,17 @@ export default defineComponent({
               },
               this.$router
             );
-            loading();
           }
         })
         .catch((e) => {
           loading();
-          console.log(e.response.data.msg);
-          new NotifyUtil().error(e.response.data.msg, 1000);
+          errorNotify(e.response.data.msg, 1000);
         });
     },
     fnReset() {
-      console.log("reset");
+      this.username = "";
+      this.password = "";
+      this.accept = false;
     },
   },
 });

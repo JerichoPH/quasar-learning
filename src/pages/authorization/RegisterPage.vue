@@ -1,14 +1,14 @@
 <template>
   <q-page class="flex flex-center">
     <!-- <img alt="Quasar logo" src="~assets/quasar-logo-vertical.svg" style="width: 200px; height: 200px"/> -->
-    <q-form @submit="fnLogin" @reset="fnReset" class="q-gutter-md">
+    <q-form @submit="fnRegister" @reset="fnReset" class="q-gutter-md">
       <q-input
         filled
         v-model="username"
         label="账号 *"
         hint=""
         lazy-rules
-        :rules="[(val) => (val && val.length > 2) || '不能小于2位']"
+        :rules="[(val) => (val && val.length >= 2) || '不能小于2位']"
       />
 
       <q-input
@@ -17,7 +17,7 @@
         label="昵称 *"
         hint=""
         lazy-rules
-        :rules="[(val) => (val && val.length > 2) || '不能小于2位']"
+        :rules="[(val) => (val && val.length >= 2) || '不能小于2位']"
       />
 
       <q-input
@@ -57,10 +57,56 @@
 <script>
 import { defineComponent } from "vue";
 import { Notify } from "quasar";
-import NotifyUtil from "../../tools/notify.js";
-import { loginAjax } from "../../apis/authorization.js";
+import {
+  loadingNotify,
+  successNotify,
+  errorNotify,
+} from "../../tools/notify.js";
+import { registerAjax } from "../../apis/authorization.js";
 
 export default defineComponent({
   name: "RegisterPage",
+  data() {
+    return {
+      username: "zhangsan",
+      nickname: "张三",
+      password: "123123",
+      passwordConfirmation: "123123",
+      accept: true,
+    };
+  },
+  methods: {
+    fnRegister() {
+      const loading = loadingNotify("注册中……");
+
+      registerAjax({
+        username: this.username,
+        nickname: this.nickname,
+        password: this.password,
+        password_confirmation: this.passwordConfirmation,
+      })
+        .then((res) => {
+          loading();
+          let { raw, json } = res;
+          successNotify(
+            "注册成功",
+            500,
+            (router) => {
+              router.push("/authorization/login");
+            },
+            this.$router
+          );
+        })
+        .catch((e) => {
+          loading();
+          errorNotify(e.response.data.msg, 1000);
+        });
+    },
+    fnReset() {
+      this.username = "";
+      this.password = "";
+      this.accept = false;
+    },
+  },
 });
 </script>
