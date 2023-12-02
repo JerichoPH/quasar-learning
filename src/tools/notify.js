@@ -276,7 +276,7 @@ class NotifyUtil {
   }
 }
 
-export default new NotifyUtil;
+export default NotifyUtil;
 
 // export const actionNoitfy = (message, timeout = 1500) => {
 //   return Notify.create({

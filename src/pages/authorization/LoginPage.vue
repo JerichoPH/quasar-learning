@@ -42,7 +42,7 @@ import { Notify } from "quasar";
 import NotifyUtil from "../../tools/notify.js";
 import { loginAjax } from "../../apis/authorization.js";
 
-export default {
+export default defineComponent({
   name: "LoginPage",
   data() {
     return {
@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     fnLogin() {
-      const loading = NotifyUtil.loading("登录中……");
+      const loading = new NotifyUtil().loading("登录中……");
 
       loginAjax({
         username: this.username,
@@ -65,7 +65,7 @@ export default {
           if (raw.token) {
             localStorage.setItem("authorization.token", raw.token);
             localStorage.setItem("authorization.user", json);
-            NotifyUtil.success(
+            new NotifyUtil().success(
               "登录成功",
               500,
               (router) => {
@@ -79,12 +79,12 @@ export default {
         .catch((e) => {
           loading();
           console.log(e.response.data.msg);
-          NotifyUtil.error(e.response.data.msg, 1000);
+          new NotifyUtil().error(e.response.data.msg, 1000);
         });
     },
     fnReset() {
       console.log("reset");
     },
   },
-};
+});
 </script>

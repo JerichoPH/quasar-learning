@@ -27,7 +27,7 @@ api.interceptors.response.use(
   (e) => {
     if (e.response.status === 401) {
       localStorage.removeItem("token");
-      NotifyUtil.error('未登录', 1000);
+      new NotifyUtil().error('未登录', 1000);
     } else {
       return Promise.reject(e);
     }
