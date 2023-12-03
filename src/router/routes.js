@@ -12,7 +12,7 @@ const routes = [
     children: [{ path: "", component: IndexPage }],
   },
   {
-    path: "/authorization",
+    path: "/auth",
     component: () => AuthorizationLayoutVue,
     children: [
       { path: "login", component: LoginPage },

@@ -28,9 +28,10 @@ api.interceptors.response.use(
     };
   },
   (e) => {
-    if (e.response.status === 401) { // 如果响应的状态码为 401（未授权）
+    if (e.response.status === 401) {
+      // 如果响应的状态码为 401（未授权）
       localStorage.removeItem("token"); // 从 localStorage 中删除 token
-      errorNotify('未登录', 1000); // 显示通知，提示用户未登录
+      errorNotify("未登录", 1000); // 显示通知，提示用户未登录
     } else {
       return Promise.reject(e); // 否则则拒绝 Promise
     }

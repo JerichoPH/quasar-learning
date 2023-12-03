@@ -44,7 +44,7 @@ import {
   successNotify,
   errorNotify,
 } from "../../tools/notify.js";
-import { loginAjax } from "../../apis/authorization.js";
+import { loginAjax } from "../../apis/auth.js";
 
 export default defineComponent({
   name: "LoginPage",
@@ -67,8 +67,8 @@ export default defineComponent({
           let { raw, json } = res;
           if (raw.token) {
             loading();
-            localStorage.setItem("authorization.token", raw.token);
-            localStorage.setItem("authorization.user", json);
+            localStorage.setItem("auth.token", raw.token);
+            localStorage.setItem("auth.user", json);
             successNotify(
               "登录成功",
               500,
@@ -92,3 +92,4 @@ export default defineComponent({
   },
 });
 </script>
+../../apis/auth.js

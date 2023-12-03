@@ -2,9 +2,9 @@ import { Notify } from "quasar";
 
 export const loadingNotify = (message, callback = null, params = {}) => {
   const n = Notify.create({
-    type: 'info',
+    type: "info",
     spinner: true,
-    position: 'center',
+    position: "center",
     progress: false,
     message,
     timeout: 0,
@@ -23,11 +23,16 @@ export const loadingNotify = (message, callback = null, params = {}) => {
   return n;
 };
 
-export const infoNotify = (message, timeout = 1500, callback = null, params = {}) => {
+export const infoNotify = (
+  message,
+  timeout = 1500,
+  callback = null,
+  params = {}
+) => {
   const n = Notify.create({
-    type: 'info',
+    type: "info",
     spinner: false,
-    position: 'center',
+    position: "center",
     progress: true,
     message,
     timeout,
@@ -46,11 +51,16 @@ export const infoNotify = (message, timeout = 1500, callback = null, params = {}
   return n;
 };
 
-export const successNotify = (message, timeout = 1500, callback = null, params = {}) => {
+export const successNotify = (
+  message,
+  timeout = 1500,
+  callback = null,
+  params = {}
+) => {
   const n = Notify.create({
-    type: 'positive',
+    type: "positive",
     spinner: false,
-    position: 'center',
+    position: "center",
     progress: true,
     message,
     timeout,
@@ -69,11 +79,16 @@ export const successNotify = (message, timeout = 1500, callback = null, params =
   return n;
 };
 
-export const errorNotify = (message, timeout = 1500, callback = null, params = {}) => {
+export const errorNotify = (
+  message,
+  timeout = 1500,
+  callback = null,
+  params = {}
+) => {
   const n = Notify.create({
-    type: 'negative',
+    type: "negative",
     spinner: false,
-    position: 'center',
+    position: "center",
     progress: true,
     message,
     timeout,

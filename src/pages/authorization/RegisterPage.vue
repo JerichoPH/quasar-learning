@@ -62,7 +62,7 @@ import {
   successNotify,
   errorNotify,
 } from "../../tools/notify.js";
-import { registerAjax } from "../../apis/authorization.js";
+import { registerAjax } from "../../apis/auth.js";
 
 export default defineComponent({
   name: "RegisterPage",
@@ -92,14 +92,14 @@ export default defineComponent({
             "注册成功",
             500,
             (router) => {
-              router.push("/authorization/login");
+              router.push("/auth/login");
             },
             this.$router
           );
         })
         .catch((e) => {
           loading();
-          errorNotify(e.response.data.msg, 1000);
+          errorNotify(e.response.data.msg || e.response.data, 1000);
         });
     },
     fnReset() {
@@ -110,3 +110,4 @@ export default defineComponent({
   },
 });
 </script>
+../../apis/auth.js
