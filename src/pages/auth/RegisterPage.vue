@@ -1,7 +1,12 @@
 <template>
   <q-page class="flex flex-center">
     <!-- <img alt="Quasar logo" src="~assets/quasar-logo-vertical.svg" style="width: 200px; height: 200px"/> -->
-    <q-form @submit="fnRegister" @reset="fnReset" class="q-gutter-md">
+    <q-form
+      @submit="fnRegister"
+      @reset="fnReset"
+      class="q-gutter-md"
+      style="width: 600px"
+    >
       <q-input
         filled
         v-model="username"

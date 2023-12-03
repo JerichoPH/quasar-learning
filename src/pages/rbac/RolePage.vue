@@ -1,15 +1,20 @@
 <template>
   <div class="q-pa-md">
-    <q-table
-      flat
-      bordered
-      title="Treats"
-      :rows="rows"
-      :columns="columns"
-      row-key="name"
-      dark
-      color="amber"
-    />
+    <div class="row"></div>
+    <div class="row">
+      <div class="col">
+        <q-table
+          flat
+          bordered
+          title="Treats"
+          :rows="rows"
+          :columns="columns"
+          row-key="name"
+          dark
+          color="amber"
+        />
+      </div>
+    </div>
   </div>
 </template>
 <script>
