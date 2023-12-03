@@ -4,7 +4,7 @@ export const loadingNotify = (message, callback = null, params = {}) => {
   const n = Notify.create({
     type: "info",
     spinner: true,
-    position: "center",
+    position: "top",
     progress: false,
     message,
     timeout: 0,
@@ -32,7 +32,7 @@ export const infoNotify = (
   const n = Notify.create({
     type: "info",
     spinner: false,
-    position: "center",
+    position: "top",
     progress: true,
     message,
     timeout,
@@ -60,7 +60,7 @@ export const successNotify = (
   const n = Notify.create({
     type: "positive",
     spinner: false,
-    position: "center",
+    position: "top",
     progress: true,
     message,
     timeout,
@@ -88,7 +88,7 @@ export const errorNotify = (
   const n = Notify.create({
     type: "negative",
     spinner: false,
-    position: "center",
+    position: "top",
     progress: true,
     message,
     timeout,

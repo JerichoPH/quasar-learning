@@ -23,13 +23,20 @@
       <q-toggle v-model="accept" label="接受条款" />
 
       <div>
-        <q-btn label="登录" type="submit" color="primary" />
+        <q-btn label="登录" type="submit" color="secondary" />
         <q-btn
           label="重置表单"
           type="reset"
           color="primary"
           flat
           class="q-ml-sm"
+        />
+        <q-btn
+          label="注册"
+          color="primary"
+          flat
+          class="q-ml-sm"
+          @click="fnHrefTo('/auth/register')"
         />
       </div>
     </q-form>
@@ -38,7 +45,6 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import { Notify } from "quasar";
 import {
   loadingNotify,
   successNotify,
@@ -48,6 +54,7 @@ import { loginAjax } from "../../apis/auth.js";
 
 export default defineComponent({
   name: "LoginPage",
+
   data() {
     return {
       username: "",
@@ -55,7 +62,11 @@ export default defineComponent({
       accept: false,
     };
   },
+
   methods: {
+    /**
+     * 登录
+     */
     fnLogin() {
       const loading = loadingNotify("登录中……");
 
@@ -81,15 +92,24 @@ export default defineComponent({
         })
         .catch((e) => {
           loading();
-          errorNotify(e.response.data.msg, 1000);
+          errorNotify(e.response.data.msg, 5000);
         });
     },
+    /**
+     * 重置表单
+     */
     fnReset() {
       this.username = "";
       this.password = "";
       this.accept = false;
     },
+    /**
+     * 跳转页面
+     * @param {string} path
+     */
+    fnHrefTo(path) {
+      if (path) this.$router.push(path);
+    },
   },
 });
 </script>
-../../apis/auth.js

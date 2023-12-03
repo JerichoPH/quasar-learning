@@ -6,7 +6,7 @@
           flat
           dense
           round
-          @click="toggleLeftDrawer"
+          @click="fnToggleLeftDrawer"
           aria-label="Menu"
           icon="menu"
         />
@@ -177,28 +177,15 @@
 </template>
 
 <script>
-import { ref } from "vue";
 import { fabYoutube } from "@quasar/extras/fontawesome-v6";
+import { errorNotify } from "../tools/notify";
 
 export default {
   name: "MyLayout",
-
-  setup() {
-    const leftDrawerOpen = ref(false);
-    const search = ref("");
-
-    function toggleLeftDrawer() {
-      leftDrawerOpen.value = !leftDrawerOpen.value;
-    }
-
+  data() {
     return {
-      fabYoutube,
-
-      leftDrawerOpen,
-      search,
-
-      toggleLeftDrawer,
-
+      leftDrawerOpen: false,
+      search: "",
       links1: [
         { icon: "home", text: "Home" },
         { icon: "whatshot", text: "Trending" },
@@ -238,6 +225,30 @@ export default {
         { text: "Test new features" },
       ],
     };
+  },
+  mounted() {
+    this.fnInit();
+  },
+  methods: {
+    /**
+     * 初始化
+     */
+    fnInit() {
+      if (!localStorage.getItem("auth.token")) {
+        errorNotify(
+          "未登录",
+          500,
+          (router) => {
+            router.push("/auth/login");
+          },
+          this.$router
+        );
+      }
+    },
+
+    fnToggleLeftDrawer() {
+      leftDrawerOpen.value = !leftDrawerOpen.value;
+    },
   },
 };
 </script>

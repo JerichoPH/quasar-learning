@@ -41,13 +41,20 @@
       <q-toggle v-model="accept" label="接受条款" />
 
       <div>
-        <q-btn label="注册" type="submit" color="primary" />
+        <q-btn label="注册" type="submit" color="secondary" />
         <q-btn
           label="重置表单"
           type="reset"
           color="primary"
           flat
           class="q-ml-sm"
+        />
+        <q-btn
+          label="登录"
+          color="primary"
+          flat
+          class="q-ml-sm"
+          @click="fnHrefTo('/auth/login')"
         />
       </div>
     </q-form>
@@ -56,7 +63,6 @@
 
 <script>
 import { defineComponent } from "vue";
-import { Notify } from "quasar";
 import {
   loadingNotify,
   successNotify,
@@ -66,6 +72,7 @@ import { registerAjax } from "../../apis/auth.js";
 
 export default defineComponent({
   name: "RegisterPage",
+
   data() {
     return {
       username: "zhangsan",
@@ -76,6 +83,9 @@ export default defineComponent({
     };
   },
   methods: {
+    /**
+     * 注册
+     */
     fnRegister() {
       const loading = loadingNotify("注册中……");
 
@@ -83,11 +93,10 @@ export default defineComponent({
         username: this.username,
         nickname: this.nickname,
         password: this.password,
-        password_confirmation: this.passwordConfirmation,
+        passwordConfirmation: this.passwordConfirmation,
       })
-        .then((res) => {
+        .then(() => {
           loading();
-          let { raw, json } = res;
           successNotify(
             "注册成功",
             500,
@@ -99,15 +108,26 @@ export default defineComponent({
         })
         .catch((e) => {
           loading();
-          errorNotify(e.response.data.msg || e.response.data, 1000);
+          errorNotify(e.response.data.msg || e.response.data, 5000);
         });
     },
+    /**
+     * 重置表单
+     */
     fnReset() {
       this.username = "";
+      this.nickname = "";
       this.password = "";
+      this.passwordConfirmation = "";
       this.accept = false;
+    },
+    /**
+     * 跳转页面
+     * @param {string} path
+     */
+    fnHrefTo(path) {
+      if (path) this.$router.push(path);
     },
   },
 });
 </script>
-../../apis/auth.js

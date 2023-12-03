@@ -12,7 +12,7 @@ const api = axios.create({
 
 // 在请求发送之前进行拦截
 api.interceptors.request.use((config) => {
-  let token = localStorage.getItem("token"); // 从 localStorage 中获取 token
+  let token = localStorage.getItem("auth.token"); // 从 localStorage 中获取 token
   if (token) config.headers.Authorization = `JWT ${token}`; // 如果有 token，则将其添加到请求头中
 
   return config;
@@ -30,7 +30,7 @@ api.interceptors.response.use(
   (e) => {
     if (e.response.status === 401) {
       // 如果响应的状态码为 401（未授权）
-      localStorage.removeItem("token"); // 从 localStorage 中删除 token
+      localStorage.removeItem("auth.token"); // 从 localStorage 中删除 token
       errorNotify("未登录", 1000); // 显示通知，提示用户未登录
     } else {
       return Promise.reject(e); // 否则则拒绝 Promise

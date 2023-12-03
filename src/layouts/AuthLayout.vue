@@ -18,7 +18,7 @@
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({
-  name: "AuthorizationLayout",
+  name: "AuthLayout",
 
   components: {},
 
