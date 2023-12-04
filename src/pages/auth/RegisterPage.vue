@@ -46,7 +46,7 @@
       <q-toggle v-model="accept" label="接受条款" />
 
       <div>
-        <q-btn label="注册" type="submit" color="secondary" />
+        <q-btn label="注册" type="submit" color="primary" />
         <q-btn
           label="重置表单"
           type="reset"
@@ -73,7 +73,7 @@ import {
   successNotify,
   errorNotify,
 } from "../../tools/notify.js";
-import { registerAjax } from "../../apis/auth.js";
+import { ajaxRegister } from "../../apis/auth.js";
 
 export default defineComponent({
   name: "RegisterPage",
@@ -94,16 +94,16 @@ export default defineComponent({
     fnRegister() {
       const loading = loadingNotify("注册中……");
 
-      registerAjax({
+      ajaxRegister({
         username: this.username,
         nickname: this.nickname,
         password: this.password,
         passwordConfirmation: this.passwordConfirmation,
       })
-        .then(() => {
+        .then((res) => {
           loading();
           successNotify(
-            "注册成功",
+            res.msg,
             500,
             (router) => {
               router.push("/auth/login");

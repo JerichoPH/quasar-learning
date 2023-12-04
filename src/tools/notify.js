@@ -1,5 +1,19 @@
 import { Notify } from "quasar";
 
+export const getDefaultActions = (handler) => {
+  return [
+    {
+      label: "取消",
+      color: "white",
+    },
+    {
+      label: "删除",
+      color: "negative",
+      handler,
+    },
+  ];
+};
+
 export const loadingNotify = (message, callback = null, params = {}) => {
   const n = Notify.create({
     type: "info",
@@ -104,5 +118,24 @@ export const errorNotify = (
       n();
     }
   }
+  return n;
+};
+
+/**
+ * 交互通知
+ * @param {string} message 消息内容
+ * @param {[{*}]} actions 行为
+ */
+export const actionNotify = (
+  actions = [],
+  message = '删除不可恢复，是否继续？',
+) => {
+  const n = Notify.create({
+    position: "center",
+    color: "orange",
+    message,
+    actions,
+  });
+
   return n;
 };

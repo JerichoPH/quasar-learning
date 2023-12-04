@@ -21,26 +21,23 @@ api.interceptors.request.use((config) => {
 // 在响应拦截之后进行处理
 api.interceptors.response.use(
   (resp) => {
-    let content = resp.data.content; // 获取响应中的 content
-    return {
-      raw: content, // 返回原始 content
-      json: JSON.stringify(content), // 返回 content 的 JSON 字符串形式
-    };
+    return resp.data;
   },
   (e) => {
+    console.log('请求错误', e);
     if (e.code === 'ERR_NETWORK') {
       return Promise.reject({
         msg: '网络错误',
       });
     }
     if (e.response.status === 401) {
-      // 如果响应的状态码为 401（未授权）
+      // 如果响应的状态码为 401（未登陆）
       localStorage.removeItem("auth.token"); // 从 localStorage 中删除 token
       errorNotify("未登录", 1000); // 显示通知，提示用户未登录
     } else {
       return Promise.reject({
         msg: e.response.data.msg || e.response.data,
-      }); // 否则则拒绝 Promise
+      });
     }
   }
 );

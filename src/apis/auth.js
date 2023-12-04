@@ -4,11 +4,11 @@ import api from "./api";
 const baseUrl = "/auth";
 
 // 登录的 AJAX 请求函数
-export const loginAjax = (params) => {
+export const ajaxLogin = (params) => {
   return api.post(`${baseUrl}/login`, params);
 };
 
 // 注册的 AJAX 请求函数
-export const registerAjax = (params) => {
+export const ajaxRegister = (params) => {
   return api.post(`${baseUrl}/register`, params);
 };

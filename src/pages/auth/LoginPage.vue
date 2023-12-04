@@ -28,7 +28,7 @@
       <q-toggle v-model="accept" label="接受条款" />
 
       <div>
-        <q-btn label="登录" type="submit" color="secondary" />
+        <q-btn label="登录" type="submit" color="primary" />
         <q-btn
           label="重置表单"
           type="reset"
@@ -49,13 +49,13 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import {
   loadingNotify,
   successNotify,
   errorNotify,
 } from "../../tools/notify.js";
-import { loginAjax } from "../../apis/auth.js";
+import { ajaxLogin } from "../../apis/auth.js";
 
 export default defineComponent({
   name: "LoginPage",
@@ -75,18 +75,17 @@ export default defineComponent({
     fnLogin() {
       const loading = loadingNotify("登录中……");
 
-      loginAjax({
+      ajaxLogin({
         username: this.username,
         password: this.password,
       })
         .then((res) => {
-          let { raw, json } = res;
-          if (raw.token) {
+          if (res.content.token) {
             loading();
-            localStorage.setItem("auth.token", raw.token);
-            localStorage.setItem("auth.user", json);
+            localStorage.setItem("auth.token", res.content.token);
+            localStorage.setItem("auth.account", res.content.account);
             successNotify(
-              "登录成功",
+              res.msg,
               500,
               (router) => {
                 router.push("/");
