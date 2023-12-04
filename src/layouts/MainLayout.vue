@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf" class="bg-grey-1">
-    <q-header elevated class="bg-white text-grey-8 q-py-xs" height-hint="58">
+    <q-header elevated class="bg-primary text-white q-py-xs" height-hint="58">
       <q-toolbar>
         <q-btn
           flat
@@ -31,8 +31,8 @@
           />
           <q-btn
             class="YL__toolbar-input-btn"
-            color="grey-3"
-            text-color="grey-8"
+            color="white"
+            text-color="black"
             icon="search"
             unelevated
           />
@@ -45,7 +45,7 @@
             round
             dense
             flat
-            color="grey-8"
+            color="white"
             icon="video_call"
             v-if="$q.screen.gt.sm"
           >
@@ -55,7 +55,7 @@
             round
             dense
             flat
-            color="grey-8"
+            color="white"
             icon="apps"
             v-if="$q.screen.gt.sm"
           >
@@ -65,13 +65,13 @@
             round
             dense
             flat
-            color="grey-8"
+            color="white"
             icon="message"
             v-if="$q.screen.gt.sm"
           >
             <q-tooltip>Messages</q-tooltip>
           </q-btn>
-          <q-btn round dense flat color="grey-8" icon="notifications">
+          <q-btn round dense flat color="white" icon="notifications">
             <q-badge color="red" text-color="white" floating> 2 </q-badge>
             <q-tooltip>Notifications</q-tooltip>
           </q-btn>
