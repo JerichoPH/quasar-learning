@@ -28,12 +28,19 @@ api.interceptors.response.use(
     };
   },
   (e) => {
+    if (e.code === 'ERR_NETWORK') {
+      return Promise.reject({
+        msg: '网络错误',
+      });
+    }
     if (e.response.status === 401) {
       // 如果响应的状态码为 401（未授权）
       localStorage.removeItem("auth.token"); // 从 localStorage 中删除 token
       errorNotify("未登录", 1000); // 显示通知，提示用户未登录
     } else {
-      return Promise.reject(e); // 否则则拒绝 Promise
+      return Promise.reject({
+        msg: e.response.data.msg || e.response.data,
+      }); // 否则则拒绝 Promise
     }
   }
 );

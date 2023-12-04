@@ -97,7 +97,7 @@ export default defineComponent({
         })
         .catch((e) => {
           loading();
-          errorNotify(e.response.data.msg, 5000);
+          errorNotify(e.msg, 5000);
         });
     },
     /**

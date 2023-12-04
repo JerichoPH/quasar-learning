@@ -113,7 +113,7 @@ export default defineComponent({
         })
         .catch((e) => {
           loading();
-          errorNotify(e.response.data.msg || e.response.data, 5000);
+          errorNotify(e.msg, 5000);
         });
     },
     /**
