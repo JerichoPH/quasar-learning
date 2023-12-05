@@ -6,6 +6,7 @@ import LoginPage from "pages/auth/LoginPage.vue";
 import RegisterPage from "pages/auth/RegisterPage.vue";
 import RbacRolePage from "pages/rbac/RolePage.vue";
 import RbacPermissionPage from "pages/rbac/PermissionPage.vue";
+import RbacMenuPage from "pages/rbac/MenuPage.vue";
 
 const routes = [
   {
@@ -27,6 +28,7 @@ const routes = [
     children: [
       { path: "role", component: RbacRolePage },
       { path: "permission", component: RbacPermissionPage },
+      { path: "menu", component: RbacMenuPage },
     ],
   },
   // Always leave this as last one,

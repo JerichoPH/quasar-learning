@@ -17,7 +17,7 @@
                 color="secondary"
                 label="添加权限"
                 icon="add"
-                @click="fnOpenCreateRbacPermission"
+                @click="fnOpenAlertCreateRbacPermission"
               />
             </q-btn-group>
           </div>
@@ -64,6 +64,7 @@
           </div>
         </div>
       </q-card-section>
+
       <q-card-section>
         <div class="row margin-top-1">
           <div class="col">
@@ -78,29 +79,6 @@
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
-                  <!-- <q-td key="index" :props="props">
-                    {{
-                      (track_pagination.page - 1) *
-                        track_pagination.rowsPerPage +
-                      props.row.index +
-                      1
-                    }}
-                  </q-td>
-                  <q-td
-                    key="equipment_unique_code"
-                    :props="props"
-                    class="text-blue-9"
-                    @click="jump(props.row.equipment_unique_code)"
-                  >
-                    {{ props.row.equipment_unique_code }}
-                  </q-td>
-                  <q-td
-                    v-for="col in props.cols.slice(2)"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.value }}
-                  </q-td> -->
                   <q-td key="name" :props="props">{{ props.row.name }}</q-td>
                   <q-td key="uri" :props="props">{{ props.row.uri }}</q-td>
                   <q-td key="description" :props="props">
@@ -344,18 +322,21 @@ export default defineComponent({
      * 搜索权限列表
      */
     fnSearch() {
-      const searchCondition = {};
-      if (this.name_search) searchCondition.name = this.name_search;
-      if (this.uri_search) searchCondition.uri = this.uri_search;
-      if (this.rbacRoleUuid_search)
-        searchCondition.rbac_role_uuid = this.rbacRoleUuid_search;
+      this.rows = [];
 
-      ajaxRbacPermissionList(searchCondition).then((res) => {
-        this.rows = [];
-
+      ajaxRbacPermissionList(
+        collect({
+          name: this.name_search,
+          uri: this.uri_search,
+          rbac_role_uuid: this.rbacRoleUuid_search,
+        })
+          .filter((val) => {
+            return !val;
+          })
+          .all()
+      ).then((res) => {
         if (res.content.rbacPermissions.length > 0) {
           collect(res.content.rbacPermissions).each((rbacPermission) => {
-            console.log("ok", rbacPermission);
             this.rows.push({
               name: rbacPermission.name,
               uri: rbacPermission.uri,
@@ -405,7 +386,7 @@ export default defineComponent({
     /**
      * 打开新建权限对话框
      */
-    fnOpenCreateRbacPermission() {
+    fnOpenAlertCreateRbacPermission() {
       this.fnResetAlertCreateRbacPermission();
       this.alertCreateRbacPermission = true;
     },

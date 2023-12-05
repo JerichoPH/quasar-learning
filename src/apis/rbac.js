@@ -91,5 +91,48 @@ export const ajaxRbacPermissionDelete = (uuid = '') => {
   return api.delete(`/rbac/permission/${uuid}`);
 }
 
+/**
+ * 菜单列表
+ * @param {{*}} params 参数
+ * @returns
+ */
+export const ajaxRbacMenuList = (params = {}) => {
+  return api.get("/rbac/menu", { params });
+}
 
+/**
+ * 菜单详情
+ * @param {string} uuid 唯一编号
+ * @returns
+ */
+export const ajaxRbacMenuDetail = (uuid = '') => {
+  return api.get(`/rbac/menu/${uuid}`);
+}
 
+/**
+ * 新建菜单
+ * @param {{*}} params 参数
+ * @returns
+ */
+export const ajaxRbacMenuStore = (params = {}) => {
+  return api.post("/rbac/menu", params);
+}
+
+/**
+ * 编辑菜单
+ * @param {string} uuid 唯一编号
+ * @param {{*}} params 参数
+ * @returns
+ */
+export const ajaxRbacMenuUpdate = (uuid = '', params = {}) => {
+  return api.put(`/rbac/menu/${uuid}`, params);
+}
+
+/**
+ * 删除菜单
+ * @param {string} uuid 唯一编号
+ * @returns
+ */
+export const ajaxRbacMenuDelete = (uuid = '') => {
+  return api.delete(`/rbac/menu/${uuid}`);
+}

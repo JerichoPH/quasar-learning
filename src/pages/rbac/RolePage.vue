@@ -239,12 +239,15 @@ export default {
      * 搜索
      */
     fnSearch() {
-      const searchCondition = {};
-      if (this.name_search) searchCondition.name = this.name_search;
-
       this.rows = [];
 
-      ajaxRbacRoleList(searchCondition).then((res) => {
+      ajaxRbacRoleList(
+        collect({ name: this.name_search })
+          .filter((val) => {
+            return !val;
+          })
+          .all()
+      ).then((res) => {
         if (res.content.rbacRoles.length > 0) {
           collect(res.content.rbacRoles).each((rbacRole) => {
             this.rows.push({ ...rbacRole, operation: { uuid: rbacRole.uuid } });

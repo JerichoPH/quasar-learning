@@ -14,7 +14,7 @@ export const getDefaultActions = (handler) => {
   ];
 };
 
-export const loadingNotify = (message, callback = null, params = {}) => {
+export const loadingNotify = (message = "处理中……", callback = null, params = {}) => {
   const n = Notify.create({
     type: "info",
     spinner: true,
@@ -67,7 +67,7 @@ export const infoNotify = (
 
 export const successNotify = (
   message,
-  timeout = 1500,
+  timeout = 500,
   callback = null,
   params = {}
 ) => {
