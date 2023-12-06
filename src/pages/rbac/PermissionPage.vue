@@ -459,13 +459,23 @@ export default defineComponent({
      * @param {{*}} params
      */
     fnDeleteRbacPermission(params = {}) {
+      if (!params.uuid) return;
+
       actionNotify(
         getDefaultActions(() => {
-          ajaxRbacPermissionDelete(params.uuid).then(
-            successNotify("删除成功", 500, () => {
-              this.fnSearch();
+          const loading = loadingNotify();
+          ajaxRbacPermissionDelete(params.uuid)
+            .then(() => {
+              successNotify("删除成功", 500, () => {
+                this.fnSearch();
+              });
             })
-          );
+            .catch((e) => {
+              errorNotify(e.msg, 5000);
+            })
+            .finally(() => {
+              loading.close();
+            });
         })
       );
     },
