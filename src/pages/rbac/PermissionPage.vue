@@ -47,17 +47,7 @@
                   />
                 </div>
                 <div class="col-3">
-                  <q-select
-                    filled
-                    use-input
-                    clearable
-                    v-model="rbacRoleUuid_search"
-                    :options="rbacRoles"
-                    @filter="fnSelRbacRoleFilter"
-                    label="所属角色"
-                    emit-value
-                    map-options
-                  />
+                  <SelRbacRole_search labelName="所属角色" />
                 </div>
               </div>
             </q-form>
@@ -237,6 +227,7 @@ import {
   getDeleteActions,
 } from "src/tools/notify";
 import collect from "collect.js";
+import SelRbacRole_search from "src/components/SelRbacRole_search.vue";
 
 const name_search = ref("");
 const uri_search = ref("");
@@ -282,6 +273,10 @@ const columns = [
   },
 ];
 const rows = ref([]);
+
+onMounted(() => {
+  fnInit();
+});
 
 /**
  * 初始化页面
@@ -354,7 +349,7 @@ const fnResetSearch = () => {
 const fnSelRbacRoleFilter = (val, update) => {
   if (val === "") {
     update(() => {
-      this.rbacRoleUuid_search = this.rbacRoleUuid_search;
+      rbacRoleUuid_search.value = rbacRoleUuid_search.value;
     });
     return;
   }
