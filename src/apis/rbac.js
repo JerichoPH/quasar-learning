@@ -103,10 +103,11 @@ export const ajaxRbacMenuList = (params = {}) => {
 /**
  * 菜单详情
  * @param {string} uuid 唯一编号
+ * @param {{*}} params 参数
  * @returns
  */
-export const ajaxRbacMenuDetail = (uuid = '') => {
-  return api.get(`/rbac/menu/${uuid}`);
+export const ajaxRbacMenuDetail = (uuid = '', params = {}) => {
+  return api.get(`/rbac/menu/${uuid}`, { params });
 }
 
 /**

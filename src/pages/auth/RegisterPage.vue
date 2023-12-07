@@ -80,8 +80,8 @@ export default defineComponent({
 
   data() {
     return {
-      username: "zhangsan",
-      nickname: "张三",
+      username: "admin",
+      nickname: "管理员",
       password: "123123",
       passwordConfirmation: "123123",
       accept: true,

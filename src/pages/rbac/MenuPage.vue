@@ -58,7 +58,7 @@
               filled
               use-input
               clearable
-              v-model="parentMenuUuid_search"
+              v-model="parentUuid_search"
               :options="rbacMenus_search"
               @filter="fnSelParentMenuFilter"
               label="所属父级"
@@ -88,8 +88,8 @@
                   <q-td key="description" :props="props">
                     {{ props.row.description }}
                   </q-td>
-                  <q-td key="parentMenuName" :props="props">{{
-                    props.row.parentMenuName
+                  <q-td key="parentName" :props="props">{{
+                    props.row.parentName
                   }}</q-td>
                   <q-td key="operation" :props="props">
                     <q-btn-group>
@@ -159,7 +159,7 @@
                 filled
                 use-input
                 clearable
-                v-model="parentMenuUuid_alertCreateRbacMenu"
+                v-model="parentUuid_alertCreateRbacMenu"
                 :options="rbacMenus_search"
                 @filter="fnSelParentMenuFilter"
                 label="所属父级"
@@ -223,7 +223,7 @@
                 filled
                 use-input
                 clearable
-                v-model="parentMenuUuid_alertEditRbacMenu"
+                v-model="parentUuid_alertEditRbacMenu"
                 :options="rbacMenus_alertEditRbacMenu"
                 @filter="fnSelParentMenuFilter"
                 label="所属父级"
@@ -262,7 +262,8 @@ import {
   errorNotify,
   loadingNotify,
   actionNotify,
-  getDefaultActions,
+  getDeleteActions,
+  getErrorActions,
 } from "src/tools/notify";
 import { collect } from "collect.js";
 
@@ -275,18 +276,18 @@ export default defineComponent({
       name_search: "",
       uri_search: "",
       description_search: "",
-      parentMenuUuid_search: "",
+      parentUuid_search: "",
       rbacMenus_search: [],
       name_alertCreateRbacMenu: "",
       uri_alertCreateRbacMenu: "",
       description_alertCreateRbacMenu: "",
-      parentMenuUuid_alertCreateRbacMenu: "",
+      parentUuid_alertCreateRbacMenu: "",
       rbacMenus_alertEditRbacMenu: [],
       currentUuid: "",
       name_alertEditRbacMenu: "",
       uri_alertEditRbacMenu: "",
       description_alertEditRbacMenu: "",
-      parentMenuUuid_alertEditRbacMenu: "",
+      parentUuid_alertEditRbacMenu: "",
       columns: [
         {
           name: "name",
@@ -310,9 +311,9 @@ export default defineComponent({
           sortable: true,
         },
         {
-          name: "parentMenuName",
+          name: "parentName",
           label: "所属父级",
-          field: "parentMenuName",
+          field: "parentName",
           align: "left",
           sortable: true,
         },
@@ -390,8 +391,8 @@ export default defineComponent({
           name: this.name_search,
           uri: this.uri_search,
           description: this.description_search,
-          parentUuid: this.parentMenuUuid_search,
-          "__preloads__[]": ["ParentMenu"],
+          parentUuid: this.parentUuid_search,
+          "__preloads__[]": ["Parent"],
         })
           .filter((val) => {
             return val;
@@ -404,9 +405,7 @@ export default defineComponent({
               name: rbacMenu.name,
               uri: rbacMenu.uri,
               description: rbacMenu.description,
-              parentMenuName: rbacMenu.parentMenu
-                ? rbacMenu.parentMenu.name
-                : "无",
+              parentName: rbacMenu.parent ? rbacMenu.parent.name : "无",
               operation: { uuid: rbacMenu.uuid },
             });
           });
@@ -420,7 +419,7 @@ export default defineComponent({
       this.name_search = "";
       this.uri_search = "";
       this.description_search = "";
-      this.parentMenuUuid_search = "";
+      this.parentUuid_search = "";
     },
     /**
      * 重置新建菜单对话框
@@ -429,7 +428,7 @@ export default defineComponent({
       this.name_alertCreateRbacMenu = "";
       this.uri_alertCreateRbacMenu = "";
       this.description_alertCreateRbacMenu = "";
-      this.parentMenuUuid_alertCreateRbacMenu = "";
+      this.parentUuid_alertCreateRbacMenu = "";
     },
     /**
      * 打开新建菜单对话框
@@ -449,6 +448,7 @@ export default defineComponent({
           name: this.name_alertCreateRbacMenu,
           uri: this.uri_alertCreateRbacMenu,
           description: this.description_alertCreateRbacMenu,
+          parentUuid: this.parentUuid_alertCreateRbacMenu,
         }).all()
       )
         .then((res) => {
@@ -464,7 +464,7 @@ export default defineComponent({
         });
     },
     /**
-     * 充值编辑菜单对话框
+     * 重置编辑菜单对话框
      */
     fnResetAlertEditRbacMenu() {
       this.rbacMenus_alertEditRbacMenu = [];
@@ -472,7 +472,7 @@ export default defineComponent({
       this.name_alertEditRbacMenu = "";
       this.uri_alertEditRbacMenu = "";
       this.description_alertEditRbacMenu = "";
-      this.parentMenuUuid_alertEditRbacMenu = "";
+      this.parentUuid_alertEditRbacMenu = "";
     },
     /**
      * 打开编辑菜单对话框
@@ -484,18 +484,25 @@ export default defineComponent({
       this.fnResetAlertEditRbacMenu();
       this.currentUuid = params.uuid;
 
-      ajaxRbacMenuDetail(this.currentUuid).then((res) => {
-        const { rbacMenu } = res.content;
-        this.name_alertEditRbacMenu = rbacMenu.name;
-        this.uri_alertEditRbacMenu = rbacMenu.uri;
-        this.description_alertEditRbacMenu = rbacMenu.description;
-        this.parentMenuUuid_alertEditRbacMenu = rbacMenu.parentMenu
-          ? rbacMenu.parentMenu.uuid
-          : "";
-      });
+      ajaxRbacMenuDetail(this.currentUuid, { "__preloads__[]": ["Parent"] })
+        .then((res) => {
+          const { rbacMenu } = res.content;
+          this.name_alertEditRbacMenu = rbacMenu.name;
+          this.uri_alertEditRbacMenu = rbacMenu.uri;
+          this.description_alertEditRbacMenu = rbacMenu.description;
+          this.parentUuid_alertEditRbacMenu = rbacMenu.parent
+            ? rbacMenu.parent.uuid
+            : "";
+        })
+        .catch((e) => {
+          errorNotify(e.msg);
+          actionNotify();
+          return;
+        });
       ajaxRbacMenuList(
         collect({
           __neq__: { uuid: this.currentUuid },
+          not_has_subs: this.currentUuid,
         })
           .filter((val) => {
             return val;
@@ -523,7 +530,7 @@ export default defineComponent({
         name: this.name_alertEditRbacMenu,
         uri: this.uri_alertEditRbacMenu,
         description: this.description_alertEditRbacMenu,
-        parentUuid: this.parentMenuUuid_alertEditRbacMenu,
+        parentUuid: this.parentUuid_alertEditRbacMenu,
       })
         .then((res) => {
           successNotify(res.msg);
@@ -544,7 +551,7 @@ export default defineComponent({
       if (!params.uuid) return;
 
       actionNotify(
-        getDefaultActions(() => {
+        getDeleteActions(() => {
           const loading = loadingNotify();
           ajaxRbacMenuDelete(params.uuid)
             .then(() => {

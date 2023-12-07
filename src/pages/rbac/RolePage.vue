@@ -191,7 +191,7 @@ import {
   successNotify,
   errorNotify,
   actionNotify,
-  getDefaultActions,
+  getDeleteActions,
 } from "src/tools/notify";
 import collect from "collect.js";
 
@@ -325,7 +325,7 @@ export default {
      */
     fnDeleteRbacRole(params = {}) {
       actionNotify(
-        getDefaultActions(() => {
+        getDeleteActions(() => {
           // 执行删除
           ajaxRbacRoleDelete(params.uuid).then((res) => {
             successNotify("删除成功", 500, () => {

@@ -234,7 +234,7 @@ import {
   errorNotify,
   successNotify,
   actionNotify,
-  getDefaultActions,
+  getDeleteActions,
 } from "../../tools/notify";
 import collect from "collect.js";
 
@@ -462,7 +462,7 @@ export default defineComponent({
       if (!params.uuid) return;
 
       actionNotify(
-        getDefaultActions(() => {
+        getDeleteActions(() => {
           const loading = loadingNotify();
           ajaxRbacPermissionDelete(params.uuid)
             .then(() => {

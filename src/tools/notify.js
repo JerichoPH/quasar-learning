@@ -1,6 +1,6 @@
 import { Notify } from "quasar";
 
-export const getDefaultActions = (handler) => {
+export const getDeleteActions = (handler) => {
   return [
     {
       label: "取消",
@@ -10,6 +10,15 @@ export const getDefaultActions = (handler) => {
       label: "删除",
       color: "negative",
       handler,
+    },
+  ];
+};
+
+export const getErrorActions = () => {
+  return [
+    {
+      label: "关闭",
+      color: "white",
     },
   ];
 };
@@ -95,29 +104,22 @@ export const successNotify = (
 
 export const errorNotify = (
   message,
-  timeout = 1500,
-  callback = null,
-  params = {}
+  handler = null
 ) => {
   const n = Notify.create({
-    type: "negative",
-    spinner: false,
     position: "top",
-    progress: true,
+    color: "negative",
+    timeout: 0,
     message,
-    timeout,
+    actions: [
+      {
+        label: "关闭",
+        color: "white",
+        handler,
+      }
+    ]
   });
-  if (callback) {
-    if (timeout) {
-      setTimeout(() => {
-        callback(params);
-        n();
-      }, timeout + 1000);
-    } else {
-      callback(params);
-      n();
-    }
-  }
+
   return n;
 };
 
