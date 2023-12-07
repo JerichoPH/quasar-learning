@@ -30,7 +30,7 @@
               <div class="row q-gutter-sm">
                 <div class="col">
                   <q-input
-                    filled
+                    outlined
                     clearable
                     lazy-rules
                     v-model="name_search"
@@ -57,29 +57,6 @@
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
-                  <!-- <q-td key="index" :props="props">
-                    {{
-                      (track_pagination.page - 1) *
-                        track_pagination.rowsPerPage +
-                      props.row.index +
-                      1
-                    }}
-                  </q-td>
-                  <q-td
-                    key="equipment_unique_code"
-                    :props="props"
-                    class="text-blue-9"
-                    @click="jump(props.row.equipment_unique_code)"
-                  >
-                    {{ props.row.equipment_unique_code }}
-                  </q-td>
-                  <q-td
-                    v-for="col in props.cols.slice(2)"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.value }}
-                  </q-td> -->
                   <q-td key="name" :props="props">{{ props.row.name }}</q-td>
                   <q-td key="operation" :props="props">
                     <q-btn-group>
@@ -179,7 +156,8 @@
     </q-card>
   </q-dialog>
 </template>
-<script>
+<script steup>
+import { onMounted, ref } from "vue";
 import {
   ajaxRbacRoleList,
   ajaxRbacRoleDetail,
@@ -195,146 +173,118 @@ import {
 } from "src/tools/notify";
 import collect from "collect.js";
 
-export default {
-  data() {
-    return {
-      name_search: "",
-      alertCreateRbacRole: false,
-      name_alertCreateRbacRole: "",
-      currentUuid: "",
-      alertEditRbacRole: false,
-      name_alertEditRbacRole: "",
-      columns: [
-        {
-          name: "name",
-          label: "名称",
-          align: "left",
-          field: "name",
-          sortable: true,
-        },
-        {
-          name: "operation",
-          lable: "操作",
-          align: "left",
-          field: "operation",
-          sortable: false,
-        },
-      ],
-      rows: [],
-    };
+const name_search = ref("");
+const alertCreateRbacRole = ref(false);
+const name_alertCreateRbacRole = ref("");
+const currentUuid = ref("");
+const alertEditRbacRole = ref(false);
+const name_alertEditRbacRole = ref("");
+const columns = [
+  {
+    name: "name",
+    label: "名称",
+    align: "left",
+    field: "name",
+    sortable: true,
   },
-  mounted() {
-    this.fnInit();
+  {
+    name: "operation",
+    lable: "操作",
+    align: "left",
+    field: "operation",
+    sortable: false,
   },
-  methods: {
-    /**
-     * 初始化
-     */
-    fnInit() {
-      ajaxRbacRoleList().then((res) => {
-        this.fnSearch();
-      });
-    },
-    /**
-     * 搜索
-     */
-    fnSearch() {
-      this.rows = [];
+];
+const rows = ref([]);
 
-      ajaxRbacRoleList(
-        collect({ name: this.name_search })
-          .filter((val) => {
-            return !val;
-          })
-          .all()
-      ).then((res) => {
-        if (res.content.rbacRoles.length > 0) {
-          collect(res.content.rbacRoles).each((rbacRole) => {
-            this.rows.push({ ...rbacRole, operation: { uuid: rbacRole.uuid } });
-          });
-        }
-      });
-    },
-    /**
-     * 重置搜索框
-     */
-    fnResetSearch() {
-      this.name_search = "";
-    },
+onMounted(() => {
+  fnInit();
+});
 
-    /**
-     * 打开新建角色对话框
-     */
-    fnOpenAlertCreateRbacRole() {
-      this.alertCreateRbacRole = true;
-    },
+const fnInit = () => {
+  ajaxRbacRoleList().then((res) => {
+    fnSearch();
+  });
+};
 
-    /**
-     * 新建角色
-     */
-    fnStoreRbacRole() {
-      ajaxRbacRoleStore({
-        name: this.name_alertCreateRbacRole,
+const fnSearch = () => {
+  this.rows = [];
+
+  ajaxRbacRoleList(
+    collect({ name: name_search.value })
+      .filter((val) => {
+        return !val;
       })
-        .then((res) => {
-          successNotify(res.msg, 500, () => {
-            this.fnSearch();
-          });
-        })
-        .catch((e) => {
-          errorNotify(e.msg, 500);
+      .all()
+  ).then((res) => {
+    if (res.content.rbacRoles.length > 0) {
+      collect(res.content.rbacRoles).each((rbacRole) => {
+        rows.value.push({
+          name: rbacRole.name,
+          operation: { uuid: rbacRole.uuid },
         });
-    },
+      });
+    }
+  });
+};
 
-    /**
-     * 打开编辑角色对话框
-     * @param {{*}} params
-     */
-    fnOpenAlertEditRbacRole(params = {}) {
-      if (params.uuid) {
-        ajaxRbacRoleDetail(params.uuid).then((res) => {
-          this.name_alertEditRbacRole = res.content.rbacRole.name;
-          this.alertEditRbacRole = true;
-          this.currentUuid = params.uuid;
+const fnResetSearch = () => {
+  this.name_search = "";
+};
+
+const fnOpenAlertCreateRbacRole = () => {
+  this.alertCreateRbacRole = true;
+};
+
+const fnStoreRbacRole = () => {
+  ajaxRbacRoleStore({
+    name: name_alertCreateRbacRole.value,
+  })
+    .then((res) => {
+      successNotify(res.msg, 500, () => {
+        fnSearch();
+      });
+    })
+    .catch((e) => {
+      errorNotify(e.msg, 500);
+    });
+};
+const fnOpenAlertEditRbacRole = (params = {}) => {
+  if (params.uuid) {
+    ajaxRbacRoleDetail(params.uuid).then((res) => {
+      name_alertEditRbacRole.value = res.content.rbacRole.name;
+      alertEditRbacRole.value = true;
+      currentUuid.value = params.uuid;
+    });
+  }
+};
+
+const fnUpdateRbacRole = () => {
+  if (!currentUuid.value) return;
+
+  ajaxRbacRoleUpdate(currentUuid.value, {
+    name: name_alertEditRbacRole.value,
+  })
+    .then((res) => {
+      successNotify(res.msg, 500, () => {
+        fnSearch();
+      });
+    })
+    .catch((e) => {
+      errorNotify(e.msg, 500);
+    });
+};
+
+const fnDeleteRbacRole = (params = {}) => {
+  actionNotify(
+    getDeleteActions(() => {
+      // 执行删除
+      ajaxRbacRoleDelete(params.uuid).then((res) => {
+        successNotify("删除成功", 500, () => {
+          fnSearch();
         });
-      }
-    },
-
-    /**
-     * 编辑角色
-     */
-    fnUpdateRbacRole() {
-      if (!this.currentUuid) return;
-
-      ajaxRbacRoleUpdate(this.currentUuid, {
-        name: this.name_alertEditRbacRole,
-      })
-        .then((res) => {
-          successNotify(res.msg, 500, () => {
-            this.fnSearch();
-          });
-        })
-        .catch((e) => {
-          errorNotify(e.msg, 500);
-        });
-    },
-
-    /**
-     * 删除角色
-     * @param {{*}} params
-     */
-    fnDeleteRbacRole(params = {}) {
-      actionNotify(
-        getDeleteActions(() => {
-          // 执行删除
-          ajaxRbacRoleDelete(params.uuid).then((res) => {
-            successNotify("删除成功", 500, () => {
-              this.fnSearch();
-            });
-          });
-        })
-      );
-    },
-  },
+      });
+    })
+  );
 };
 </script>

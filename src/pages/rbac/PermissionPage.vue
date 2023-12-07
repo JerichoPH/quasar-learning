@@ -220,8 +220,8 @@
   </q-dialog>
 </template>
 
-<script>
-import { defineComponent } from "vue";
+<script setup>
+import { onMounted, ref } from "vue";
 import {
   ajaxRbacRoleList,
   ajaxRbacPermissionList,
@@ -229,256 +229,244 @@ import {
   ajaxRbacPermissionStore,
   ajaxRbacPermissionUpdate,
   ajaxRbacPermissionDelete,
-} from "../../apis/rbac";
+} from "src/apis/rbac";
 import {
   errorNotify,
   successNotify,
   actionNotify,
   getDeleteActions,
-} from "../../tools/notify";
+} from "src/tools/notify";
 import collect from "collect.js";
 
-export default defineComponent({
-  name: "PermissionPage",
-  data() {
-    return {
-      name_search: "",
-      uri_search: "",
-      rbacRoleUuid_search: "",
-      rbacRoles: [],
-      alertCreateRbacPermission: false,
-      name_alertCreateRbacPermission: "",
-      uri_alertCreateRbacPermission: "",
-      description_alertCreateRbacPermission: "",
-      currentUuid: "",
-      alertEditRbacPermission: false,
-      name_alertEditRbacPermission: "",
-      uri_alertEditRbacPermission: "",
-      description_alertEditRbacPermission: "",
-      columns: [
-        {
-          name: "name",
-          label: "名称",
-          align: "left",
-          field: "name",
-          sortable: true,
-        },
-        {
-          name: "uri",
-          label: "路由",
-          align: "left",
-          field: "uri",
-          sortable: true,
-        },
-        {
-          name: "description",
-          label: "描述",
-          align: "left",
-          field: "description",
-          sortable: true,
-        },
-        {
-          name: "operation",
-          label: "操作",
-          align: "left",
-          field: "operation",
-          sortable: false,
-        },
-      ],
-      rows: [],
-    };
+const name_search = ref("");
+const uri_search = ref("");
+const rbacRoleUuid_search = ref("");
+const rbacRoles = ref([]);
+const alertCreateRbacPermission = ref(false);
+const name_alertCreateRbacPermission = ref("");
+const uri_alertCreateRbacPermission = ref("");
+const description_alertCreateRbacPermission = ref("");
+const currentUuid = ref("");
+const alertEditRbacPermission = ref(false);
+const name_alertEditRbacPermission = ref("");
+const uri_alertEditRbacPermission = ref("");
+const description_alertEditRbacPermission = ref("");
+const columns = [
+  {
+    name: "name",
+    label: "名称",
+    align: "left",
+    field: "name",
+    sortable: true,
   },
-  mounted() {
-    this.fnInit();
+  {
+    name: "uri",
+    label: "路由",
+    align: "left",
+    field: "uri",
+    sortable: true,
   },
-  methods: {
-    /**
-     * 初始化页面
-     */
-    fnInit() {
-      this.fnLoadRbacRoleList();
-      this.fnSearch();
-    },
-    /**
-     * 加载角色列表
-     */
-    fnLoadRbacRoleList() {
-      ajaxRbacRoleList()
-        .then((res) => {
-          if (res.content.rbacRoles.length > 0) {
-            collect(res.content.rbacRoles).each((rbacRole) => {
-              this.rbacRoles.push({
-                label: rbacRole.name,
-                value: rbacRole.uuid,
-              });
-            });
-          }
-        })
-        .catch((e) => {
-          errorNotify(`加载角色列表错误 ${e.msg}`);
-        });
-    },
-    /**
-     * 搜索权限列表
-     */
-    fnSearch() {
-      this.rows = [];
+  {
+    name: "description",
+    label: "描述",
+    align: "left",
+    field: "description",
+    sortable: true,
+  },
+  {
+    name: "operation",
+    label: "操作",
+    align: "left",
+    field: "operation",
+    sortable: false,
+  },
+];
+const rows = ref([]);
 
-      ajaxRbacPermissionList(
-        collect({
-          name: this.name_search,
-          uri: this.uri_search,
-          rbac_role_uuid: this.rbacRoleUuid_search,
-        })
-          .filter((val) => {
-            return !val;
-          })
-          .all()
-      ).then((res) => {
-        if (res.content.rbacPermissions.length > 0) {
-          collect(res.content.rbacPermissions).each((rbacPermission) => {
-            this.rows.push({
-              name: rbacPermission.name,
-              uri: rbacPermission.uri,
-              description: rbacPermission.description,
-              operation: { uuid: rbacPermission.uuid },
-            });
+/**
+ * 初始化页面
+ */
+const fnInit = () => {
+  fnLoadRbacRoleList();
+  fnSearch();
+};
+/**
+ * 加载角色列表
+ */
+const fnLoadRbacRoleList = () => {
+  ajaxRbacRoleList()
+    .then((res) => {
+      if (res.content.rbacRoles.length > 0) {
+        collect(res.content.rbacRoles).each((rbacRole) => {
+          rbacRoles.value.push({
+            label: rbacRole.name,
+            value: rbacRole.uuid,
           });
-          console.log("rows", this.rows);
-        }
-      });
-    },
-    /**
-     * 重置搜索条件
-     */
-    fnResetSearch() {
-      this.name_search = "";
-      this.uri_search = "";
-      this.rbacRoleUuid_search = "";
-    },
-    /**
-     * 下拉框筛选
-     * @param {string} val
-     * @param {string} update
-     */
-    fnSelRbacRoleFilter(val, update) {
-      if (val === "") {
-        update(() => {
-          this.rbacRoleUuid_search = this.rbacRoleUuid_search;
         });
-        return;
       }
-      update(() => {
-        const needle = val.toLowerCase();
-        this.rbacRoleUuid_search = this.rbacRoleUuid_search.filter(
-          (v) => v.toLowerCase().indexOf(needle) > -1
-        );
-      });
-    },
-    /**
-     * 重置新建权限对话框
-     */
-    fnResetAlertCreateRbacPermission() {
-      this.name_alertCreateRbacPermission = "";
-      this.uri_alertCreateRbacPermission = "";
-      this.description_alertCreateRbacPermission = "";
-    },
-    /**
-     * 打开新建权限对话框
-     */
-    fnOpenAlertCreateRbacPermission() {
-      this.fnResetAlertCreateRbacPermission();
-      this.alertCreateRbacPermission = true;
-    },
-    /**
-     * 新建权限
-     */
-    fnStoreRbacPermission() {
-      ajaxRbacPermissionStore({
-        name: this.name_alertCreateRbacPermission,
-        uri: this.uri_alertCreateRbacPermission,
-        description: this.description_alertCreateRbacPermission,
+    })
+    .catch((e) => {
+      errorNotify(`加载角色列表错误 ${e.msg}`);
+    });
+};
+/**
+ * 搜索权限列表
+ */
+const fnSearch = () => {
+  this.rows = [];
+
+  ajaxRbacPermissionList(
+    collect({
+      name: name_search.value,
+      uri: uri_search.value,
+      rbac_role_uuid: rbacRoleUuid_search.value,
+    })
+      .filter((val) => {
+        return !val;
       })
-        .then((res) => {
-          successNotify(res.msg, 500, () => {
-            this.fnSearch();
+      .all()
+  ).then((res) => {
+    if (res.content.rbacPermissions.length > 0) {
+      collect(res.content.rbacPermissions).each((rbacPermission) => {
+        rows.value.push({
+          name: rbacPermission.name,
+          uri: rbacPermission.uri,
+          description: rbacPermission.description,
+          operation: { uuid: rbacPermission.uuid },
+        });
+      });
+    }
+  });
+};
+/**
+ * 重置搜索条件
+ */
+const fnResetSearch = () => {
+  name_search.value = "";
+  uri_search.value = "";
+  rbacRoleUuid_search.value = "";
+};
+/**
+ * 下拉框筛选
+ * @param {string} val
+ * @param {string} update
+ */
+const fnSelRbacRoleFilter = (val, update) => {
+  if (val === "") {
+    update(() => {
+      this.rbacRoleUuid_search = this.rbacRoleUuid_search;
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    rbacRoleUuid_search.value = this.rbacRoleUuid_search.filter(
+      (v) => v.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
+/**
+ * 重置新建权限对话框
+ */
+const fnResetAlertCreateRbacPermission = () => {
+  name_alertCreateRbacPermission.value = "";
+  uri_alertCreateRbacPermission.value = "";
+  description_alertCreateRbacPermission.value = "";
+};
+/**
+ * 打开新建权限对话框
+ */
+const fnOpenAlertCreateRbacPermission = () => {
+  fnResetAlertCreateRbacPermission();
+  alertCreateRbacPermission.value = true;
+};
+/**
+ * 新建权限
+ */
+const fnStoreRbacPermission = () => {
+  ajaxRbacPermissionStore({
+    name: name_alertCreateRbacPermission.value,
+    uri: uri_alertCreateRbacPermission.value,
+    description: description_alertCreateRbacPermission.value,
+  })
+    .then((res) => {
+      successNotify(res.msg, 500, () => {
+        fnSearch();
+      });
+    })
+    .catch((e) => {
+      errorNotify(e.msg, 5000);
+    });
+};
+/**
+ * 重置编辑权限对话框
+ */
+const fnResetAlertEditRbacPermission = () => {
+  name_alertEditRbacPermission.value = "";
+  uri_alertEditRbacPermission.value = "";
+  description_alertEditRbacPermission.value = "";
+};
+/**
+ * 打开编辑权限模态框
+ * @param {{*}} params
+ */
+const fnOpenAlertEditRbacPermission = (params = {}) => {
+  if (params.uuid) {
+    fnResetAlertEditRbacPermission();
+    currentUuid.value = params.uuid;
+    ajaxRbacPermissionDetail(params.uuid).then((res) => {
+      alertEditRbacPermission.value = true;
+      name_alertEditRbacPermission.value = res.content.rbacPermission.name;
+      uri_alertEditRbacPermission.value = res.content.rbacPermission.uri;
+      description_alertEditRbacPermission.value =
+        res.content.rbacPermission.description;
+    });
+  }
+};
+/**
+ * 更新权限
+ * @param {{*}} params
+ */
+const fnUpdateRbacPermission = () => {
+  if (!this.currentUuid) return;
+
+  ajaxRbacPermissionUpdate(this.currentUuid, {
+    name: name_alertEditRbacPermission.value,
+    uri: uri_alertEditRbacPermission.value,
+    description: description_alertEditRbacPermission.value,
+  })
+    .then((res) => {
+      successNotify(res.msg, 500, () => {
+        fnSearch();
+      });
+    })
+    .catch((e) => {
+      errorNotify(e.msg, 5000);
+    });
+};
+/**
+ * 删除权限
+ * @param {{*}} params
+ */
+const fnDeleteRbacPermission = (params = {}) => {
+  if (!params["uuid"]) return;
+
+  actionNotify(
+    getDeleteActions(() => {
+      const loading = loadingNotify();
+      ajaxRbacPermissionDelete(params.uuid)
+        .then(() => {
+          successNotify("删除成功", 500, () => {
+            fnSearch();
           });
         })
         .catch((e) => {
           errorNotify(e.msg, 5000);
-        });
-    },
-    /**
-     * 重置编辑权限对话框
-     */
-    fnResetAlertEditRbacPermission() {
-      this.name_alertEditRbacPermission = "";
-      this.uri_alertEditRbacPermission = "";
-      this.description_alertEditRbacPermission = "";
-    },
-    /**
-     * 打开编辑权限模态框
-     * @param {{*}} params
-     */
-    fnOpenAlertEditRbacPermission(params = {}) {
-      if (params.uuid) {
-        this.fnResetAlertEditRbacPermission();
-        this.currentUuid = params.uuid;
-        ajaxRbacPermissionDetail(params.uuid).then((res) => {
-          this.alertEditRbacPermission = true;
-          this.name_alertEditRbacPermission = res.content.rbacPermission.name;
-          this.uri_alertEditRbacPermission = res.content.rbacPermission.uri;
-          this.description_alertEditRbacPermission =
-            res.content.rbacPermission.description;
-        });
-      }
-    },
-    /**
-     * 更新权限
-     * @param {{*}} params
-     */
-    fnUpdateRbacPermission() {
-      if (!this.currentUuid) return;
-
-      ajaxRbacPermissionUpdate(this.currentUuid, {
-        name: this.name_alertEditRbacPermission,
-        uri: this.uri_alertEditRbacPermission,
-        description: this.description_alertEditRbacPermission,
-      })
-        .then((res) => {
-          successNotify(res.msg, 500, () => {
-            this.fnSearch();
-          });
         })
-        .catch((e) => {
-          errorNotify(e.msg, 5000);
+        .finally(() => {
+          loading.close();
         });
-    },
-    /**
-     * 删除权限
-     * @param {{*}} params
-     */
-    fnDeleteRbacPermission(params = {}) {
-      if (!params.uuid) return;
-
-      actionNotify(
-        getDeleteActions(() => {
-          const loading = loadingNotify();
-          ajaxRbacPermissionDelete(params.uuid)
-            .then(() => {
-              successNotify("删除成功", 500, () => {
-                this.fnSearch();
-              });
-            })
-            .catch((e) => {
-              errorNotify(e.msg, 5000);
-            })
-            .finally(() => {
-              loading.close();
-            });
-        })
-      );
-    },
-  },
-});
+    })
+  );
+};
 </script>

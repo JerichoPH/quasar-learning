@@ -70,6 +70,9 @@
               :columns="columns"
               row-key="name"
               color="amber"
+              :pagination="{ rowsPerPage: 200 }"
+              :rows-per-page-options="[50, 100, 200, 0]"
+              rows-per-page-label="分页"
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
@@ -307,6 +310,10 @@ provide("parentUuid_search", parentUuid_search);
 provide("parentUuid_alertCreate", parentUuid_alertCreateRbacMenu);
 provide("parentUuid_alertEdit", parentUuid_alertEditRbacMenu);
 
+onMounted(() => {
+  fnInit();
+});
+
 const fnInit = () => {
   fnGetParentRbacMenus();
   fnSearch();
@@ -368,22 +375,6 @@ const fnResetSearch = () => {
   description_search.value = "";
   parentUuid_search.value = "";
 };
-
-// const fnSelParentMenuFilter = (val, update) => {
-//   if (val === "") {
-//     update(() => {
-//       // rbacRoleUuid_search.value = rbacRoleUuid_search.value;
-//     });
-//     return;
-//   }
-
-//   update(() => {
-//     const needle = val.toLowerCase();
-//     rbacRoleUuid_search.value = rbacRoleUuid_search.value.filter(
-//       (v) => v.toLowerCase().indexOf(needle) > -1
-//     );
-//   });
-// };
 
 const fnResetAlertCreateRbace = () => {
   name_alertCreateRbacMenu.value = "";
@@ -498,8 +489,4 @@ const fnDeleteRbacMenu = (params = {}) => {
     })
   );
 };
-
-onMounted(() => {
-  fnInit();
-});
 </script>
