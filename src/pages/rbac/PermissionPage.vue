@@ -257,7 +257,7 @@ import {
 } from "src/apis/rbac";
 
 // 表格数据
-let columns = [
+const columns = [
   {
     name: "name",
     field: "name",
@@ -294,28 +294,28 @@ let columns = [
     sortable: false,
   },
 ];
-let rows = ref([]);
+const rows = ref([]);
 
 // 搜索条件
-let name_search = ref("");
-let uri_search = ref("");
-let description_search = ref("");
-let rbacRoleUuid_search = ref("");
+const name_search = ref("");
+const uri_search = ref("");
+const description_search = ref("");
+const rbacRoleUuid_search = ref("");
 
 // 新建权限对话框
-let alertCreateRbacPermission = ref(false);
-let name_alertCreateRbacPermission = ref("");
-let uri_alertCreateRbacPermission = ref("");
-let description_alertCreateRbacPermission = ref("");
-let rbacRoleUuids_alertCreateRbacPermission = ref([]);
+const alertCreateRbacPermission = ref(false);
+const name_alertCreateRbacPermission = ref("");
+const uri_alertCreateRbacPermission = ref("");
+const description_alertCreateRbacPermission = ref("");
+const rbacRoleUuids_alertCreateRbacPermission = ref([]);
 
 // 编辑权限对话框
-let alertEditRbacPermission = ref(false);
-let name_alertEditRbacPermission = ref("");
-let uri_alertEditRbacPermission = ref("");
-let description_alertEditRbacPermission = ref("");
-let rbacRoleUuids_alertEditRbacPermission = ref([]);
-let currentUuid = ref("");
+const alertEditRbacPermission = ref(false);
+const name_alertEditRbacPermission = ref("");
+const uri_alertEditRbacPermission = ref("");
+const description_alertEditRbacPermission = ref("");
+const rbacRoleUuids_alertEditRbacPermission = ref([]);
+const currentUuid = ref("");
 
 provide("rbacRoleUuid_search", rbacRoleUuid_search);
 provide("rbacRoleUuids_alertCreate", rbacRoleUuids_alertCreateRbacPermission);
@@ -328,10 +328,10 @@ onMounted(() => {
 /**
  * 初始化
  */
-let fnInit = () => {
+const fnInit = () => {
   fnSearch();
 };
-let fnResetSearch = () => {
+const fnResetSearch = () => {
   name_search.value = "";
   uri_search.value = "";
   description_search.value = "";
@@ -340,7 +340,7 @@ let fnResetSearch = () => {
 /**
  * 搜索
  */
-let fnSearch = () => {
+const fnSearch = () => {
   rows.value = [];
 
   ajaxRbacPermissionList({
@@ -375,7 +375,7 @@ let fnSearch = () => {
 /**
  * 重置新建权限对话框
  */
-let fnResetAlertCreateRbacPermission = () => {
+const fnResetAlertCreateRbacPermission = () => {
   name_alertCreateRbacPermission.value = "";
   uri_alertCreateRbacPermission.value = "";
   description_alertCreateRbacPermission.value = "";
@@ -384,15 +384,15 @@ let fnResetAlertCreateRbacPermission = () => {
 /**
  * 打开新建权限对话框
  */
-let fnOpenAlertCreateRbacPermission = () => {
+const fnOpenAlertCreateRbacPermission = () => {
   fnResetAlertCreateRbacPermission();
   alertCreateRbacPermission.value = true;
 };
 /**
  * 新建权限
  */
-let fnStoreRbacPermission = () => {
-  let loading = loadingNotify();
+const fnStoreRbacPermission = () => {
+  const loading = loadingNotify();
 
   ajaxRbacPermissionStore({
     name: name_alertCreateRbacPermission.value,
@@ -414,7 +414,7 @@ let fnStoreRbacPermission = () => {
 /**
  * 重置编辑权限对话框
  */
-let fnResetAlertEditRbacPermission = () => {
+const fnResetAlertEditRbacPermission = () => {
   name_alertEditRbacPermission.value = "";
   uri_alertEditRbacPermission.value = "";
   description_alertEditRbacPermission.value = "";
@@ -424,7 +424,7 @@ let fnResetAlertEditRbacPermission = () => {
  * 打开编辑权限对话框
  * @param {{*}} params 参数
  */
-let fnOpenAlertEditRbacPermission = (params = {}) => {
+const fnOpenAlertEditRbacPermission = (params = {}) => {
   if (!params["uuid"]) return;
   fnResetAlertEditRbacPermission();
 
@@ -453,10 +453,10 @@ let fnOpenAlertEditRbacPermission = (params = {}) => {
 /**
  * 编辑权限
  */
-let fnUpdateRbacPermission = () => {
+const fnUpdateRbacPermission = () => {
   if (!currentUuid.value) return;
 
-  let loading = loadingNotify();
+  const loading = loadingNotify();
 
   ajaxRbacPermissionUpdate(currentUuid.value, {
     name: name_alertEditRbacPermission.value,
@@ -479,10 +479,10 @@ let fnUpdateRbacPermission = () => {
  * 删除权限
  * @param {{*}} params 参数
  */
-let fnDestroyRbacPermission = (params = {}) => {
+const fnDestroyRbacPermission = (params = {}) => {
   if (!params["uuid"]) return;
 
-  let loading = loadingNotify();
+  const loading = loadingNotify();
   actionNotify(
     getDestroyActions(() => {
       ajaxRbacPermissionDestory(params.uuid)

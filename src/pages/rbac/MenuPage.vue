@@ -271,7 +271,7 @@ import {
 } from "src/apis/rbac";
 
 // 表格数据
-let columns = [
+const columns = [
   {
     name: "name",
     field: "name",
@@ -315,33 +315,33 @@ let columns = [
     sortable: true,
   },
 ];
-let rows = ref([]);
+const rows = ref([]);
 
 // 表格数据
-let name_search = ref("");
-let uri_search = ref("");
-let description_search = ref("");
-let parentUuid_search = ref("");
-let selRbacMenu_search_enable = ref(true);
-let rbacRoleUuid_search = ref("");
+const name_search = ref("");
+const uri_search = ref("");
+const description_search = ref("");
+const parentUuid_search = ref("");
+const selRbacMenu_search_enable = ref(true);
+const rbacRoleUuid_search = ref("");
 
 // 新建菜单对话框
-let alertCreateRbacMenu = ref(false);
-let name_alertCreateRbacMenu = ref("");
-let uri_alertCreateRbacMenu = ref("");
-let description_alertCreateRbacMenu = ref("");
-let parentUuid_alertCreateRbacMenu = ref("");
-let rbacRoleUuids_alertCreateRbacMenu = ref(null);
+const alertCreateRbacMenu = ref(false);
+const name_alertCreateRbacMenu = ref("");
+const uri_alertCreateRbacMenu = ref("");
+const description_alertCreateRbacMenu = ref("");
+const parentUuid_alertCreateRbacMenu = ref("");
+const rbacRoleUuids_alertCreateRbacMenu = ref(null);
 
 // 编辑菜单对话框
-let alertEditRbacMenu = ref(false);
-let rbacMenus_alertEditRbacMenu = ref([]);
-let currentUuid = ref("");
-let name_alertEditRbacMenu = ref("");
-let uri_alertEditRbacMenu = ref("");
-let description_alertEditRbacMenu = ref("");
-let parentUuid_alertEditRbacMenu = ref("");
-let rbacRoleUuids_alertEditRbacMenu = ref(null);
+const alertEditRbacMenu = ref(false);
+const rbacMenus_alertEditRbacMenu = ref([]);
+const currentUuid = ref("");
+const name_alertEditRbacMenu = ref("");
+const uri_alertEditRbacMenu = ref("");
+const description_alertEditRbacMenu = ref("");
+const parentUuid_alertEditRbacMenu = ref("");
+const rbacRoleUuids_alertEditRbacMenu = ref(null);
 
 provide("parentUuid_search", parentUuid_search);
 provide("parentUuid_alertCreate", parentUuid_alertCreateRbacMenu);
@@ -357,13 +357,13 @@ onMounted(() => {
 /**
  * 初始化页面
  */
-let fnInit = () => {
+const fnInit = () => {
   fnSearch();
 };
 /**
  * 搜索
  */
-let fnSearch = () => {
+const fnSearch = () => {
   rows.value = [];
   ajaxRbacMenuList({
     "__preloads__[]": ["Parent"],
@@ -397,7 +397,7 @@ let fnSearch = () => {
 /**
  * 初始化搜索栏
  */
-let fnResetSearch = () => {
+const fnResetSearch = () => {
   name_search.value = "";
   uri_search.value = "";
   description_search.value = "";
@@ -407,7 +407,7 @@ let fnResetSearch = () => {
 /**
  * 重置新建菜单对话框
  */
-let fnResetAlertCreateRbace = () => {
+const fnResetAlertCreateRbace = () => {
   name_alertCreateRbacMenu.value = "";
   uri_alertCreateRbacMenu.value = "";
   description_alertCreateRbacMenu.value = "";
@@ -417,15 +417,15 @@ let fnResetAlertCreateRbace = () => {
 /**
  * 打开新建菜单对话框
  */
-let fnOpenAlertCreateRbacMenu = () => {
+const fnOpenAlertCreateRbacMenu = () => {
   fnResetAlertCreateRbace();
   alertCreateRbacMenu.value = true;
 };
 /**
  * 新建菜单
  */
-let fnStoreRbacMenu = () => {
-  let loading = loadingNotify();
+const fnStoreRbacMenu = () => {
+  const loading = loadingNotify();
 
   ajaxRbacMenuStore({
     name: name_alertCreateRbacMenu.value,
@@ -447,7 +447,7 @@ let fnStoreRbacMenu = () => {
 /**
  * 重置编辑菜单对话框
  */
-let fnResetAlertEditRbacMenu = () => {
+const fnResetAlertEditRbacMenu = () => {
   rbacMenus_alertEditRbacMenu.value = [];
   currentUuid.value = "";
   name_alertEditRbacMenu.value = "";
@@ -460,7 +460,7 @@ let fnResetAlertEditRbacMenu = () => {
  * 打开编辑菜单对话框
  * @param {{uuid:string}} params 参数
  */
-let fnOpenAlertEditRbacMenu = (params = {}) => {
+const fnOpenAlertEditRbacMenu = (params = {}) => {
   if (!params.hasOwnProperty("uuid")) return;
   if (!params.uuid) return;
 
@@ -489,9 +489,9 @@ let fnOpenAlertEditRbacMenu = (params = {}) => {
 /**
  * 编辑菜单
  */
-let fnUpdateRbacMenu = () => {
+const fnUpdateRbacMenu = () => {
   if (!currentUuid.value) return;
-  let loading = loadingNotify();
+  const loading = loadingNotify();
   ajaxRbacMenuUpdate(currentUuid.value, {
     name: name_alertEditRbacMenu.value,
     uri: uri_alertEditRbacMenu.value,
@@ -514,12 +514,12 @@ let fnUpdateRbacMenu = () => {
  * 删除菜单
  * @param {{uuid:string}} params 参数
  */
-let fnDeleteRbacMenu = (params = {}) => {
+const fnDeleteRbacMenu = (params = {}) => {
   if (!params.uuid) return;
 
   actionNotify(
     getDestroyActions(() => {
-      let loading = loadingNotify();
+      const loading = loadingNotify();
       ajaxRbacMenuDestroy(params.uuid)
         .then(() => {
           successNotify("删除成功");

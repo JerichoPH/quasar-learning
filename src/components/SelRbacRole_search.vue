@@ -18,7 +18,7 @@ import { ajaxRbacRoleList } from "/src/apis/rbac";
 import collect from "collect.js";
 import { errorNotify } from "src/tools/notify";
 
-let props = defineProps({
+const props = defineProps({
   labelName: {
     type: String,
     default: "",
@@ -32,13 +32,13 @@ let props = defineProps({
   },
 });
 
-let labelName = props.labelName;
-let ajaxParams = props.ajaxParams;
-let rbacRoleUuid_search = inject("rbacRoleUuid_search");
-let rbacRoles_search = ref([]);
-let rbacRoles = ref([]);
+const labelName = props.labelName;
+const ajaxParams = props.ajaxParams;
+const rbacRoleUuid_search = inject("rbacRoleUuid_search");
+const rbacRoles_search = ref([]);
+const rbacRoles = ref([]);
 
-let fnFilter = (val, update) => {
+const fnFilter = (val, update) => {
   if (val === "") {
     update(() => {
       rbacRoles_search.value = rbacRoles.value;

@@ -180,8 +180,8 @@ import {
   getDestroyActions,
 } from "src/tools/notify";
 
-let name_search = ref("");
-let columns = [
+const name_search = ref("");
+const columns = [
   {
     name: "name",
     field: "name",
@@ -197,12 +197,12 @@ let columns = [
     sortable: true,
   },
 ];
-let rows = ref([]);
-let alertCreateRbacRole = ref(false);
-let name_alertCreateRbacRole = ref("");
-let alertEditRbacRole = ref(false);
-let name_alertEditRbacRole = ref("");
-let currentUuid = ref("");
+const rows = ref([]);
+const alertCreateRbacRole = ref(false);
+const name_alertCreateRbacRole = ref("");
+const alertEditRbacRole = ref(false);
+const name_alertEditRbacRole = ref("");
+const currentUuid = ref("");
 
 onMounted(() => {
   fnInit();
@@ -211,19 +211,19 @@ onMounted(() => {
 /**
  * 初始化页面
  */
-let fnInit = () => {
+const fnInit = () => {
   fnSearch();
 };
 /**
  * 重置搜索栏
  */
-let fnResetSearch = () => {
+const fnResetSearch = () => {
   name_search.value = "";
 };
 /**
  * 搜索
  */
-let fnSearch = () => {
+const fnSearch = () => {
   rows.value = [];
 
   ajaxRbacRoleList(
@@ -246,21 +246,21 @@ let fnSearch = () => {
 /**
  * 重置新建角色对话框
  */
-let fnResetAlertCreateRbacRole = () => {
+const fnResetAlertCreateRbacRole = () => {
   name_alertCreateRbacRole.value = "";
 };
 /**
  * 打开新建角色对话框
  */
-let fnOpenAlertCreateRbacRole = () => {
+const fnOpenAlertCreateRbacRole = () => {
   fnResetAlertCreateRbacRole();
   alertCreateRbacRole.value = true;
 };
 /**
  * 新建角色
  */
-let fnStoreRbacRole = () => {
-  let loading = loadingNotify();
+const fnStoreRbacRole = () => {
+  const loading = loadingNotify();
 
   ajaxRbacRoleStore({
     name: name_alertCreateRbacRole.value,
@@ -279,13 +279,13 @@ let fnStoreRbacRole = () => {
 /**
  * 重置编辑角色对话框
  */
-let fnResetAlertEditRbacRole = () => {
+const fnResetAlertEditRbacRole = () => {
   name_alertEditRbacRole.value = "";
 };
 /**
  * 打开编辑角色对话框
  */
-let fnOpenAlertEditRbacRole = (params = {}) => {
+const fnOpenAlertEditRbacRole = (params = {}) => {
   if (!params["uuid"]) return;
 
   fnResetAlertEditRbacRole();
@@ -305,7 +305,7 @@ let fnOpenAlertEditRbacRole = (params = {}) => {
 /**
  * 编辑角色
  */
-let fnUpdateRbacRole = () => {
+const fnUpdateRbacRole = () => {
   if (!currentUuid.value) return;
 
   ajaxRbacRoleUpdate(currentUuid.value, {
@@ -322,12 +322,12 @@ let fnUpdateRbacRole = () => {
 /**
  * 删除角色
  */
-let fnDestroyRbacRole = (params = {}) => {
+const fnDestroyRbacRole = (params = {}) => {
   if (!params["uuid"]) return;
 
   actionNotify(
     getDestroyActions(() => {
-      let loading = loadingNotify();
+      const loading = loadingNotify();
 
       ajaxRbacRoleDestroy(params.uuid)
         .then((res) => {

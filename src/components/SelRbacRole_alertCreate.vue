@@ -12,7 +12,7 @@
         ? rbacRoleUuids_alertCreate.map((uuid) => rbacRolesMap[uuid].name)
         : ''
     "
-    :multiple="multiple"
+    multiple
     @filter="fnFilter"
     emit-value
     map-options
@@ -24,7 +24,7 @@ import collect from "collect.js";
 import { ajaxRbacRoleList } from "/src/apis/rbac";
 import { errorNotify } from "src/tools/notify";
 
-let props = defineProps({
+const props = defineProps({
   labelName: {
     type: String,
     default: "",
@@ -42,12 +42,12 @@ let props = defineProps({
   },
 });
 
-let labelName = props.labelName;
-let ajaxParams = props.ajaxParams;
-let rbacRoleUuids_alertCreate = inject("rbacRoleUuids_alertCreate");
-let options = ref([]);
-let rbacRoles = ref([]);
-let rbacRolesMap = ref({});
+const labelName = props.labelName;
+const ajaxParams = props.ajaxParams;
+const rbacRoleUuids_alertCreate = inject("rbacRoleUuids_alertCreate");
+const options = ref([]);
+const rbacRoles = ref([]);
+const rbacRolesMap = ref({});
 
 onMounted(() => {
   ajaxRbacRoleList(ajaxParams)
@@ -67,7 +67,7 @@ onMounted(() => {
     });
 });
 
-let fnFilter = (val, update) => {
+const fnFilter = (val, update) => {
   if (val === "") {
     update(() => {
       options.value = rbacRoles.value;
