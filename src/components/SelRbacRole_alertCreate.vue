@@ -9,10 +9,10 @@
     :label="labelName"
     :display-value="
       rbacRoleUuids_alertCreate
-        ? rbacRoleUuids_alertCreate.map((uuid) => rbacRolesMap[uuid].name)
+        ? rbacRoleUuids_alertCreate.map((uuid) => rbacRolesMap[uuid]['name'])
         : ''
     "
-    multiple
+    :multiple="multiple"
     @filter="fnFilter"
     emit-value
     map-options
@@ -44,6 +44,7 @@ const props = defineProps({
 
 const labelName = props.labelName;
 const ajaxParams = props.ajaxParams;
+const multiple = props.multiple;
 const rbacRoleUuids_alertCreate = inject("rbacRoleUuids_alertCreate");
 const options = ref([]);
 const rbacRoles = ref([]);
@@ -61,6 +62,7 @@ onMounted(() => {
           rbacRolesMap.value[rbacRole.uuid] = rbacRole.name;
         });
       }
+      console.log("ok", rbacRolesMap);
     })
     .catch((e) => {
       errorNotify(e.msg);
