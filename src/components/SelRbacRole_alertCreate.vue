@@ -9,7 +9,9 @@
     :label="labelName"
     :display-value="
       rbacRoleUuids_alertCreate
-        ? rbacRoleUuids_alertCreate.map((uuid) => rbacRolesMap[uuid]['name'])
+        ? rbacRoleUuids_alertCreate.map((uuid) => {
+            return rbacRolesMap[uuid]['name'];
+          })
         : ''
     "
     :multiple="multiple"
