@@ -54,7 +54,10 @@
             />
           </div>
           <div class="col">
-            <SelRbacMenu_search labelName="所属父级" />
+            <SelRbacMenu_search
+              labelName="所属父级"
+              v-if="selRbacMenu_search_enable"
+            />
           </div>
         </q-form>
       </q-card-section>
@@ -250,61 +253,71 @@ import {
   ajaxRbacMenuUpdate,
 } from "src/apis/rbac";
 
-const alertCreateRbacMenu = ref(false);
-const alertEditRbacMenu = ref(false);
-const name_search = ref("");
-const uri_search = ref("");
-const description_search = ref("");
-const parentUuid_search = ref("");
-const rbacMenus_search = ref([]);
-const name_alertCreateRbacMenu = ref("");
-const uri_alertCreateRbacMenu = ref("");
-const description_alertCreateRbacMenu = ref("");
-const parentUuid_alertCreateRbacMenu = ref("");
-const rbacMenus_alertEditRbacMenu = ref([]);
-const currentUuid = ref("");
-const name_alertEditRbacMenu = ref("");
-const uri_alertEditRbacMenu = ref("");
-const description_alertEditRbacMenu = ref("");
-const parentUuid_alertEditRbacMenu = ref("");
-const columns = [
+let columns = [
   {
     name: "name",
-    label: "名称",
     field: "name",
+    label: "名称",
     align: "left",
     sortable: true,
   },
   {
     name: "uri",
-    label: "路由",
     field: "uri",
+    label: "路由",
     align: "left",
     sortable: true,
   },
   {
     name: "description",
-    label: "描述",
     field: "description",
+    label: "描述",
     align: "left",
     sortable: true,
   },
   {
     name: "parentName",
-    label: "所属父级",
     field: "parentName",
+    label: "所属父级",
+    align: "left",
+    sortable: true,
+  },
+  {
+    name: "rbacRoles",
+    field: "rbacRoles",
+    label: "所属角色",
     align: "left",
     sortable: true,
   },
   {
     name: "operation",
-    label: "",
     field: "operation",
+    label: "",
     align: "left",
     sortable: true,
   },
 ];
-const rows = ref([]);
+let rows = ref([]);
+
+let alertCreateRbacMenu = ref(false);
+let alertEditRbacMenu = ref(false);
+let name_search = ref("");
+let uri_search = ref("");
+let description_search = ref("");
+let parentUuid_search = ref("");
+let rbacMenus_search = ref([]);
+let selRbacMenu_search_enable = ref(true);
+
+let name_alertCreateRbacMenu = ref("");
+let uri_alertCreateRbacMenu = ref("");
+let description_alertCreateRbacMenu = ref("");
+let parentUuid_alertCreateRbacMenu = ref("");
+let rbacMenus_alertEditRbacMenu = ref([]);
+let currentUuid = ref("");
+let name_alertEditRbacMenu = ref("");
+let uri_alertEditRbacMenu = ref("");
+let description_alertEditRbacMenu = ref("");
+let parentUuid_alertEditRbacMenu = ref("");
 
 provide("parentUuid_search", parentUuid_search);
 provide("parentUuid_alertCreate", parentUuid_alertCreateRbacMenu);
@@ -314,12 +327,14 @@ onMounted(() => {
   fnInit();
 });
 
-const fnInit = () => {
+let fnInit = () => {
   fnGetParentRbacMenus();
   fnSearch();
 };
-
-const fnGetParentRbacMenus = () => {
+/**
+ * 获取父级菜单
+ */
+let fnGetParentRbacMenus = () => {
   ajaxRbacMenuList(
     collect({
       parentUuid: "",
@@ -340,65 +355,65 @@ const fnGetParentRbacMenus = () => {
   });
 };
 
-const fnSearch = () => {
+let fnSearch = () => {
   rows.value = [];
-  ajaxRbacMenuList(
-    collect({
-      name: name_search.value,
-      uri: uri_search.value,
-      description: description_search.value,
-      parent_uuid: parentUuid_search.value,
-      "__preloads__[]": ["Parent"],
-    })
-      .filter((val) => {
-        return val;
-      })
-      .all()
-  ).then((res) => {
-    if (res.content.rbac_menus.length > 0) {
-      collect(res.content.rbac_menus).each((rbacMenu) => {
-        rows.value.push({
-          name: rbacMenu.name,
-          uri: rbacMenu.uri,
-          description: rbacMenu.description,
-          parentName: rbacMenu.parent ? rbacMenu.parent.name : "无",
-          operation: { uuid: rbacMenu.uuid },
+  ajaxRbacMenuList({
+    name: name_search.value,
+    uri: uri_search.value,
+    description: description_search.value,
+    parent_uuid: parentUuid_search.value,
+    "__preloads__[]": ["Parent"],
+  })
+    .then((res) => {
+      if (res.content.rbac_menus.length > 0) {
+        collect(res.content.rbac_menus).each((rbacMenu) => {
+          rows.value.push({
+            name: rbacMenu.name,
+            uri: rbacMenu.uri,
+            description: rbacMenu.description,
+            parentName: rbacMenu.parent ? rbacMenu.parent.name : "无",
+            operation: { uuid: rbacMenu.uuid },
+          });
         });
-      });
-    }
-  });
+      }
+    })
+    .catch((e) => {
+      errorNotify(e.msg);
+    })
+    .finally(() => {
+      selRbacMenu_search_enable.value = false;
+      selRbacMenu_search_enable.value = true;
+    });
 };
 
-const fnResetSearch = () => {
+let fnResetSearch = () => {
   name_search.value = "";
   uri_search.value = "";
   description_search.value = "";
   parentUuid_search.value = "";
 };
 
-const fnResetAlertCreateRbace = () => {
+let fnResetAlertCreateRbace = () => {
   name_alertCreateRbacMenu.value = "";
   uri_alertCreateRbacMenu.value = "";
   description_alertCreateRbacMenu.value = "";
   parentUuid_alertCreateRbacMenu.value = "";
 };
 
-const fnOpenAlertCreateRbacMenu = () => {
+let fnOpenAlertCreateRbacMenu = () => {
   fnResetAlertCreateRbace();
   alertCreateRbacMenu.value = true;
 };
 
-const fnStoreRbacMenu = () => {
-  const loading = loadingNotify();
+let fnStoreRbacMenu = () => {
+  let loading = loadingNotify();
 
-  ajaxRbacMenuStore(
-    collect({
-      name: name_alertCreateRbacMenu.value,
-      uri: uri_alertCreateRbacMenu.value,
-      description: description_alertCreateRbacMenu.value,
-      parentUuid: parentUuid_alertCreateRbacMenu.value,
-    }).all()
-  )
+  ajaxRbacMenuStore({
+    name: name_alertCreateRbacMenu.value,
+    uri: uri_alertCreateRbacMenu.value,
+    description: description_alertCreateRbacMenu.value,
+    parentUuid: parentUuid_alertCreateRbacMenu.value,
+  })
     .then((res) => {
       successNotify(res.msg, 500);
       fnGetParentRbacMenus();
@@ -412,7 +427,7 @@ const fnStoreRbacMenu = () => {
     });
 };
 
-const fnResetAlertEditRbacMenu = () => {
+let fnResetAlertEditRbacMenu = () => {
   rbacMenus_alertEditRbacMenu.value = [];
   currentUuid.value = "";
   name_alertEditRbacMenu.value = "";
@@ -421,7 +436,7 @@ const fnResetAlertEditRbacMenu = () => {
   parentUuid_alertEditRbacMenu.value = "";
 };
 
-const fnOpenAlertEditRbacMenu = (params = {}) => {
+let fnOpenAlertEditRbacMenu = (params = {}) => {
   if (!params.hasOwnProperty("uuid")) return;
   if (!params.uuid) return;
 
@@ -436,18 +451,17 @@ const fnOpenAlertEditRbacMenu = (params = {}) => {
       parentUuid_alertEditRbacMenu.value = res.content.rbac_menu.parent
         ? res.content.rbac_menu.parent.uuid
         : "";
+
+      alertEditRbacMenu.value = true;
     })
     .catch((e) => {
       errorNotify(e.msg);
-      return;
     });
-
-  alertEditRbacMenu.value = true;
 };
 
-const fnUpdateRbacMenu = () => {
+let fnUpdateRbacMenu = () => {
   if (!currentUuid.value) return;
-  const loading = loadingNotify();
+  let loading = loadingNotify();
   ajaxRbacMenuUpdate(currentUuid.value, {
     name: name_alertEditRbacMenu.value,
     uri: uri_alertEditRbacMenu.value,
@@ -467,12 +481,12 @@ const fnUpdateRbacMenu = () => {
     });
 };
 
-const fnDeleteRbacMenu = (params = {}) => {
+let fnDeleteRbacMenu = (params = {}) => {
   if (!params.uuid) return;
 
   actionNotify(
     getDestroyActions(() => {
-      const loading = loadingNotify();
+      let loading = loadingNotify();
       ajaxRbacMenuDestroy(params.uuid)
         .then(() => {
           successNotify("删除成功");
