@@ -6,7 +6,6 @@
     v-model="rbacRoleUuid_search"
     :options="rbacRoles_search"
     :label="labelName"
-    :dispaly-value="rbacRolesMap[rbacRoleUuid_search]"
     @filter="fnFilter"
     emit-value
     map-options
@@ -37,7 +36,6 @@ const ajaxParams = props.ajaxParams;
 const rbacRoleUuid_search = inject("rbacRoleUuid_search");
 const rbacRoles_search = ref([]);
 const rbacRoles = ref([]);
-const rbacRolesMap = ref({});
 
 const fnFilter = (val, update) => {
   if (val === "") {
@@ -57,13 +55,12 @@ const fnFilter = (val, update) => {
 onMounted(() => {
   ajaxRbacRoleList(ajaxParams)
     .then((res) => {
-      if (res.content.rbacMenus.length > 0) {
-        collect(res.content.rbacMenus).each((rbacMenu) => {
+      if (res.content.rbacRoles.length > 0) {
+        collect(res.content.rbacRoles).each((rbacRole) => {
           rbacRoles.value.push({
-            label: rbacMenu.name,
-            value: rbacMenu.uuid,
+            label: rbacRole.name,
+            value: rbacRole.uuid,
           });
-          rbacRolesMap[rbacMenu.uuid] = rbacMenu.name;
         });
       }
     })

@@ -3,11 +3,9 @@
     <q-card>
       <q-card-section>
         <div class="row margin-top-1">
-          <div class="col">
-            <span style="font-size: 20px">搜索</span>
-          </div>
+          <div class="col"><span style="font-size: 20px">搜索</span></div>
           <div class="col text-right">
-            <q-btn-group right>
+            <q-btn-group>
               <q-btn
                 color="primary"
                 label="搜索"
@@ -25,10 +23,10 @@
           </div>
         </div>
         <div class="row margin-top-1">
-          <div class="col-3">
+          <div class="col">
             <q-form>
-              <div class="row q-gutter-sm">
-                <div class="col">
+              <div class="row q-pb-sm q-col-gutter-sm">
+                <div class="col-3">
                   <q-input
                     outlined
                     clearable
@@ -43,6 +41,7 @@
           </div>
         </div>
       </q-card-section>
+
       <q-card-section>
         <div class="row">
           <div class="col">
@@ -54,10 +53,17 @@
               :columns="columns"
               row-key="name"
               color="amber"
+              :pagination="{ rowsPerPage: 200 }"
+              :rows-per-page-options="[50, 100, 200, 0]"
+              rows-per-page-label="分页"
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
                   <q-td key="name" :props="props">{{ props.row.name }}</q-td>
+                  <q-td key="uri" :props="props">{{ props.row.uri }}</q-td>
+                  <q-td key="description" :props="props">
+                    {{ props.row.description }}
+                  </q-td>
                   <q-td key="operation" :props="props">
                     <q-btn-group>
                       <q-btn
@@ -68,7 +74,7 @@
                         编辑
                       </q-btn>
                       <q-btn
-                        @click="fnDeleteRbacRole(props.row.operation)"
+                        @click="fnDestroyRbacRole(props.row.operation)"
                         color="negative"
                         icon="delete"
                       >
@@ -85,7 +91,7 @@
     </q-card>
   </div>
 
-  <!-- Dialog -->
+  <!-- 对话框 -->
   <!-- 新建角色对话框 -->
   <q-dialog v-model="alertCreateRbacRole">
     <q-card style="width: 800px">
@@ -93,11 +99,11 @@
         <div class="text-h6">新建角色</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
-        <q-form class="q-gutter-md">
+        <q-form class="q-gutter-md" @submit.prevent="">
           <div class="row">
             <div class="col">
               <q-input
-                filled
+                outlined
                 clearable
                 lazy-rules
                 v-model="name_alertCreateRbacRole"
@@ -120,7 +126,6 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
-
   <!-- 编辑角色对话框 -->
   <q-dialog v-model="alertEditRbacRole">
     <q-card style="width: 800px">
@@ -128,15 +133,15 @@
         <div class="text-h6">编辑角色</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
-        <q-form class="q-gutter-md">
+        <q-form class="q-gutter-md" @submit.prevent="">
           <div class="row">
             <div class="col">
-              <input type="hidden" v-mode="currentUuid" />
               <q-input
-                filled
+                outlined
+                clearable
+                lazy-rules
                 v-model="name_alertEditRbacRole"
                 label="名称"
-                lazy-rules
                 :rules="[]"
               />
             </div>
@@ -156,65 +161,70 @@
     </q-card>
   </q-dialog>
 </template>
-<script steup>
-import { onMounted, ref } from "vue";
+
+<script setup>
+import { ref, onMounted } from "vue";
+import collect from "collect.js";
 import {
   ajaxRbacRoleList,
   ajaxRbacRoleDetail,
   ajaxRbacRoleStore,
   ajaxRbacRoleUpdate,
-  ajaxRbacRoleDelete,
-} from "../../apis/rbac";
+  ajaxRbacRoleDestroy,
+} from "src/apis/rbac";
 import {
-  successNotify,
+  loadingNotify,
   errorNotify,
+  successNotify,
   actionNotify,
-  getDeleteActions,
+  getDestroyActions,
 } from "src/tools/notify";
-import collect from "collect.js";
 
-const name_search = ref("");
-const alertCreateRbacRole = ref(false);
-const name_alertCreateRbacRole = ref("");
-const currentUuid = ref("");
-const alertEditRbacRole = ref(false);
-const name_alertEditRbacRole = ref("");
-const columns = [
+let name_search = ref("");
+let columns = [
   {
     name: "name",
+    field: "name",
     label: "名称",
     align: "left",
-    field: "name",
     sortable: true,
   },
   {
     name: "operation",
-    lable: "操作",
-    align: "left",
     field: "operation",
-    sortable: false,
+    label: "操作",
+    align: "left",
+    sortable: true,
   },
 ];
-const rows = ref([]);
+let rows = ref([]);
+let alertCreateRbacRole = ref(false);
+let name_alertCreateRbacRole = ref("");
+let alertEditRbacRole = ref(false);
+let name_alertEditRbacRole = ref("");
+let currentUuid = ref("");
 
 onMounted(() => {
   fnInit();
 });
 
-const fnInit = () => {
-  ajaxRbacRoleList().then((res) => {
-    fnSearch();
-  });
+/**
+ * 初始化页面
+ */
+let fnInit = () => {
+  fnSearch();
 };
-
-const fnSearch = () => {
-  this.rows = [];
+/**
+ * 搜索
+ */
+let fnSearch = () => {
+  rows.value = [];
 
   ajaxRbacRoleList(
-    collect({ name: name_search.value })
-      .filter((val) => {
-        return !val;
-      })
+    collect({
+      name: name_search.value,
+    })
+      .filter((val) => !val)
       .all()
   ).then((res) => {
     if (res.content.rbacRoles.length > 0) {
@@ -227,63 +237,103 @@ const fnSearch = () => {
     }
   });
 };
-
-const fnResetSearch = () => {
-  this.name_search = "";
+/**
+ * 重置新建角色对话框
+ */
+let fnResetAlertCreateRbacRole = () => {
+  name_alertCreateRbacRole.value = "";
 };
-
-const fnOpenAlertCreateRbacRole = () => {
-  this.alertCreateRbacRole = true;
+/**
+ * 打开新建角色对话框
+ */
+let fnOpenAlertCreateRbacRole = () => {
+  fnResetAlertCreateRbacRole();
+  alertCreateRbacRole.value = true;
 };
+/**
+ * 新建角色
+ */
+let fnStoreRbacRole = () => {
+  let loading = loadingNotify();
 
-const fnStoreRbacRole = () => {
   ajaxRbacRoleStore({
     name: name_alertCreateRbacRole.value,
   })
     .then((res) => {
-      successNotify(res.msg, 500, () => {
-        fnSearch();
-      });
+      successNotify(res.msg);
+      fnSearch();
     })
     .catch((e) => {
-      errorNotify(e.msg, 500);
+      errorNotify(e.msg);
+    })
+    .finally(() => {
+      loading();
     });
 };
-const fnOpenAlertEditRbacRole = (params = {}) => {
-  if (params.uuid) {
-    ajaxRbacRoleDetail(params.uuid).then((res) => {
-      name_alertEditRbacRole.value = res.content.rbacRole.name;
-      alertEditRbacRole.value = true;
-      currentUuid.value = params.uuid;
-    });
-  }
+/**
+ * 重置编辑角色对话框
+ */
+let fnResetAlertEditRbacRole = () => {
+  name_alertEditRbacRole.value = "";
 };
+/**
+ * 打开编辑角色对话框
+ */
+let fnOpenAlertEditRbacRole = (params = {}) => {
+  if (!params["uuid"]) return;
 
-const fnUpdateRbacRole = () => {
+  fnResetAlertEditRbacRole();
+  currentUuid.value = params.uuid;
+
+  ajaxRbacRoleDetail(currentUuid.value)
+    .then((res) => {
+      if (res.content.rbacRole) {
+        name_alertEditRbacRole.value = res.content.rbacRole.name;
+        alertEditRbacRole.value = true;
+      }
+    })
+    .catch((e) => {
+      errorNotify(e.msg);
+    });
+};
+/**
+ * 编辑角色
+ */
+let fnUpdateRbacRole = () => {
   if (!currentUuid.value) return;
 
   ajaxRbacRoleUpdate(currentUuid.value, {
     name: name_alertEditRbacRole.value,
   })
     .then((res) => {
-      successNotify(res.msg, 500, () => {
-        fnSearch();
-      });
+      successNotify(res.msg);
+      fnSearch();
     })
     .catch((e) => {
-      errorNotify(e.msg, 500);
+      errorNotify(e.msg);
     });
 };
+/**
+ * 删除角色
+ */
+let fnDestroyRbacRole = (params = {}) => {
+  if (!params["uuid"]) return;
 
-const fnDeleteRbacRole = (params = {}) => {
   actionNotify(
-    getDeleteActions(() => {
-      // 执行删除
-      ajaxRbacRoleDelete(params.uuid).then((res) => {
-        successNotify("删除成功", 500, () => {
+    getDestroyActions(() => {
+      let loading = loadingNotify();
+
+      ajaxRbacRoleDestroy(params.uuid)
+        .then((res) => {
+          successNotify("删除成功");
           fnSearch();
+        })
+        .catch((e) => {
+          errorNotify(e.msg);
+        })
+        .finally(() => {
+          loading();
         });
-      });
     })
   );
 };

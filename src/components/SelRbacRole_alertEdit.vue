@@ -3,8 +3,10 @@
     outlined
     use-input
     clearable
-    v-model="parentUuid_alertCreate"
+    v-model="rbacRoleUuid_alertEdit"
     :options="options"
+    :display-value="rbacRolesMap[rbacRoleUuid_alertEdit]"
+    :filter="fnFilter"
     :label="labelName"
     @filter="fnFilter"
     emit-value
@@ -13,7 +15,7 @@
 </template>
 <script setup>
 import { inject, defineProps, onMounted, ref } from "vue";
-import { ajaxRbacMenuList } from "/src/apis/rbac";
+import { ajaxRbacRoleList } from "/src/apis/rbac";
 import collect from "collect.js";
 import { errorNotify } from "src/tools/notify";
 
@@ -33,34 +35,36 @@ const props = defineProps({
 
 const labelName = props.labelName;
 const ajaxParams = props.ajaxParams;
-const parentUuid_alertCreate = inject("parentUuid_alertCreate");
+const rbacRoleUuid_alertEdit = inject("rbacRoleUuid_alertEdit");
 const options = ref([]);
-const rbacMenus = ref([]);
+const rbacRoles = ref([]);
+const rbacRolesMap = ref({});
 
 const fnFilter = (val, update) => {
   if (val === "") {
     update(() => {
-      options.value = rbacMenus.value;
+      options.value = rbacRoles.value;
     });
     return;
   }
 
   update(() => {
-    options.value = rbacMenus.value.filter(
+    options.value = rbacRoles.value.filter(
       (v) => v.label.toLowerCase().indexOf(val.toLowerCase()) > -1
     );
   });
 };
 
 onMounted(() => {
-  ajaxRbacMenuList(ajaxParams)
+  ajaxRbacRoleList(ajaxParams)
     .then((res) => {
-      if (res.content.rbacMenus.length > 0) {
-        collect(res.content.rbacMenus).each((rbacMenu) => {
-          rbacMenus.value.push({
-            label: rbacMenu.name,
-            value: rbacMenu.uuid,
+      if (res.content.rbacRoles.length > 0) {
+        collect(res.content.rbacRoles).each((rbacRole) => {
+          rbacRoles.value.push({
+            label: rbacRole.name,
+            value: rbacRole.uuid,
           });
+          rbacRolesMap.value[rbacRole.uuid] = rbacRole.name;
         });
       }
     })

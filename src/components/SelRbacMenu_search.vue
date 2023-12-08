@@ -1,6 +1,6 @@
 <template>
   <q-select
-    filled
+    outlined
     use-input
     clearable
     v-model="parentUuid_search"

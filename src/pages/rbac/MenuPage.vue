@@ -15,7 +15,7 @@
               <q-btn color="primary" label="重置" flat @click="fnResetSearch" />
               <q-btn
                 color="secondary"
-                label="添加菜单"
+                label="新建菜单"
                 icon="add"
                 @click="fnOpenAlertCreateRbacMenu"
               />
@@ -230,25 +230,25 @@
   </q-dialog>
 </template>
 <script setup>
-import { onMounted, ref, provide } from "vue";
-import {
-  ajaxRbacMenuDelete,
-  ajaxRbacMenuDetail,
-  ajaxRbacMenuList,
-  ajaxRbacMenuStore,
-  ajaxRbacMenuUpdate,
-} from "src/apis/rbac";
+import { ref, onMounted, provide } from "vue";
+import { collect } from "collect.js";
+import SelRbacMenu_search from "src/components/SelRbacMenu_search.vue";
+import SelRbacMenu_alertCreate from "src/components/SelRbacMenu_alertCreate.vue";
+import SelRbacMenu_alertEdit from "src/components/SelRbacMenu_alertEdit.vue";
 import {
   successNotify,
   errorNotify,
   loadingNotify,
   actionNotify,
-  getDeleteActions,
+  getDestroyActions,
 } from "src/tools/notify";
-import { collect } from "collect.js";
-import SelRbacMenu_search from "src/components/SelRbacMenu_search.vue";
-import SelRbacMenu_alertCreate from "src/components/SelRbacMenu_alertCreate.vue";
-import SelRbacMenu_alertEdit from "src/components/SelRbacMenu_alertEdit.vue";
+import {
+  ajaxRbacMenuDestroy,
+  ajaxRbacMenuDetail,
+  ajaxRbacMenuList,
+  ajaxRbacMenuStore,
+  ajaxRbacMenuUpdate,
+} from "src/apis/rbac";
 
 const alertCreateRbacMenu = ref(false);
 const alertEditRbacMenu = ref(false);
@@ -472,9 +472,9 @@ const fnDeleteRbacMenu = (params = {}) => {
   if (!params.uuid) return;
 
   actionNotify(
-    getDeleteActions(() => {
+    getDestroyActions(() => {
       const loading = loadingNotify();
-      ajaxRbacMenuDelete(params.uuid)
+      ajaxRbacMenuDestroy(params.uuid)
         .then(() => {
           successNotify("删除成功");
           fnGetParentRbacMenus();

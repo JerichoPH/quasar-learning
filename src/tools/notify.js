@@ -1,6 +1,6 @@
 import { Notify } from "quasar";
 
-export const getDeleteActions = (handler) => {
+export const getDestroyActions = (handler) => {
   return [
     {
       label: "取消",

@@ -42,7 +42,7 @@ export const ajaxRbacRoleUpdate = (uuid = '', params = {}) => {
  * @param {string} uuid 唯一编号
  * @returns
  */
-export const ajaxRbacRoleDelete = (uuid = '') => {
+export const ajaxRbacRoleDestroy = (uuid = '') => {
   return api.delete(`/rbac/role/${uuid}`);
 }
 
@@ -87,7 +87,7 @@ export const ajaxRbacPermissionUpdate = (uuid = '', params = {}) => {
  * @param {string} uuid 唯一编号
  * @returns
  */
-export const ajaxRbacPermissionDelete = (uuid = '') => {
+export const ajaxRbacPermissionDestory = (uuid = '') => {
   return api.delete(`/rbac/permission/${uuid}`);
 }
 
@@ -134,6 +134,6 @@ export const ajaxRbacMenuUpdate = (uuid = '', params = {}) => {
  * @param {string} uuid 唯一编号
  * @returns
  */
-export const ajaxRbacMenuDelete = (uuid = '') => {
+export const ajaxRbacMenuDestroy = (uuid = '') => {
   return api.delete(`/rbac/menu/${uuid}`);
 }
