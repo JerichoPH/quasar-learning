@@ -331,6 +331,12 @@ onMounted(() => {
 let fnInit = () => {
   fnSearch();
 };
+let fnResetSearch = () => {
+  name_search.value = "";
+  uri_search.value = "";
+  description_search.value = "";
+  rbacRoleUuid_search.value = "";
+};
 /**
  * 搜索
  */
@@ -338,14 +344,13 @@ let fnSearch = () => {
   rows.value = [];
 
   ajaxRbacPermissionList({
+    "__preloads__[]": ["RbacRoles"],
     name: name_search.value,
     uri: uri_search.value,
     description: description_search.value,
     rbac_role_uuid: rbacRoleUuid_search.value,
-    "__preloads__[]": ["RbacRoles"],
   })
     .then((res) => {
-      console.log("ok", res.content.rbac_permissions);
       if (res.content.rbac_permissions.length > 0) {
         collect(res.content.rbac_permissions).each((rbacPermission) => {
           rows.value.push({

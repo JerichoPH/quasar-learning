@@ -164,6 +164,11 @@
                 label-name="所属父级"
                 class="margin-top-1"
               />
+              <SelRbacRole_alertCreate
+                label-name="所属角色"
+                multiple="true"
+                class="margin-top-1"
+              />
             </div>
           </div>
         </q-form>
@@ -248,6 +253,8 @@ import SelRbacMenu_search from "src/components/SelRbacMenu_search.vue";
 import SelRbacMenu_alertCreate from "src/components/SelRbacMenu_alertCreate.vue";
 import SelRbacMenu_alertEdit from "src/components/SelRbacMenu_alertEdit.vue";
 import SelRbacRole_search from "src/components/SelRbacRole_search.vue";
+import SelRbacRole_alertCreate from "src/components/SelRbacRole_alertCreate.vue";
+import SelRbacRole_alertEdit from "src/components/SelRbacRole_alertEdit.vue";
 import {
   successNotify,
   errorNotify,
@@ -324,6 +331,7 @@ let name_alertCreateRbacMenu = ref("");
 let uri_alertCreateRbacMenu = ref("");
 let description_alertCreateRbacMenu = ref("");
 let parentUuid_alertCreateRbacMenu = ref("");
+let rbacRoleUuids_alertCreateRbacMenu = ref(null);
 
 // 编辑菜单对话框
 let alertEditRbacMenu = ref(false);
@@ -333,11 +341,14 @@ let name_alertEditRbacMenu = ref("");
 let uri_alertEditRbacMenu = ref("");
 let description_alertEditRbacMenu = ref("");
 let parentUuid_alertEditRbacMenu = ref("");
+let rbacRoleUuids_alertEditRbacMenu = ref(null);
 
 provide("parentUuid_search", parentUuid_search);
 provide("parentUuid_alertCreate", parentUuid_alertCreateRbacMenu);
 provide("parentUuid_alertEdit", parentUuid_alertEditRbacMenu);
 provide("rbacRoleUuid_search", rbacRoleUuid_search);
+provide("rbacRoleUuids_alertCreate", rbacRoleUuids_alertCreateRbacMenu);
+provide("rbacRoleUuids_alertEdit", rbacRoleUuids_alertEditRbacMenu);
 
 onMounted(() => {
   fnInit();
@@ -401,6 +412,7 @@ let fnResetAlertCreateRbace = () => {
   uri_alertCreateRbacMenu.value = "";
   description_alertCreateRbacMenu.value = "";
   parentUuid_alertCreateRbacMenu.value = "";
+  rbacRoleUuids_alertCreateRbacMenu.value = [];
 };
 /**
  * 打开新建菜单对话框
@@ -419,7 +431,7 @@ let fnStoreRbacMenu = () => {
     name: name_alertCreateRbacMenu.value,
     uri: uri_alertCreateRbacMenu.value,
     description: description_alertCreateRbacMenu.value,
-    parentUuid: parentUuid_alertCreateRbacMenu.value,
+    parent_uuid: parentUuid_alertCreateRbacMenu.value,
   })
     .then((res) => {
       successNotify(res.msg, 500);
@@ -442,6 +454,7 @@ let fnResetAlertEditRbacMenu = () => {
   uri_alertEditRbacMenu.value = "";
   description_alertEditRbacMenu.value = "";
   parentUuid_alertEditRbacMenu.value = "";
+  rbacRoleUuids_alertEditRbacMenu.value = [];
 };
 /**
  * 打开编辑菜单对话框
@@ -462,7 +475,11 @@ let fnOpenAlertEditRbacMenu = (params = {}) => {
       parentUuid_alertEditRbacMenu.value = res.content.rbac_menu.parent
         ? res.content.rbac_menu.parent.uuid
         : "";
-
+      rbacRoleUuids_alertEditRbacMenu.value = collect(
+        res.content.rbac_menu.rbac_roles
+      )
+        .pluck("uuid")
+        .all();
       alertEditRbacMenu.value = true;
     })
     .catch((e) => {
@@ -479,7 +496,8 @@ let fnUpdateRbacMenu = () => {
     name: name_alertEditRbacMenu.value,
     uri: uri_alertEditRbacMenu.value,
     description: description_alertEditRbacMenu.value,
-    parentUuid: parentUuid_alertEditRbacMenu.value,
+    parent_uuid: parentUuid_alertEditRbacMenu.value,
+    rbac_role_uuids: rbacRoleUuids_alertEditRbacMenu.value,
   })
     .then((res) => {
       successNotify(res.msg);

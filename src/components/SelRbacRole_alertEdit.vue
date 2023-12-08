@@ -9,9 +9,7 @@
     :label="labelName"
     :display-value="
       rbacRoleUuids_alertEdit
-        ? rbacRoleUuids_alertEdit.map((val) => {
-            return rbacRolesMap[val];
-          })
+        ? rbacRoleUuids_alertEdit.map((val) => rbacRolesMap[val])
         : ''
     "
     :multiple="multiple"
@@ -21,7 +19,7 @@
   />
 </template>
 <script setup>
-import { inject, defineProps, onMounted, ref, computed } from "vue";
+import { inject, defineProps, onMounted, ref } from "vue";
 import collect from "collect.js";
 import { ajaxRbacRoleList } from "/src/apis/rbac";
 import { errorNotify } from "src/tools/notify";
