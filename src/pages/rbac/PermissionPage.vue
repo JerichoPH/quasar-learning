@@ -57,7 +57,7 @@
                   />
                 </div>
                 <div class="col-3">
-                  <SelRbacRole_search labelName="所属角色" />
+                  <SelRbacRole_search label-name="所属角色" />
                 </div>
               </div>
             </q-form>
@@ -157,7 +157,7 @@
                 class="margin-top-1"
               />
               <SelRbacRole_alertCreate
-                labelName="所属角色"
+                label-name="所属角色"
                 multiple
                 class="margin-top-1"
               />
@@ -214,7 +214,7 @@
                 class="margin-top-1"
               />
               <SelRbacRole_alertEdit
-                labelName="所属角色"
+                label-name="所属角色"
                 multiple
                 class="margin-top-1"
               />

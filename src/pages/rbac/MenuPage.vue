@@ -22,44 +22,53 @@
             </q-btn-group>
           </div>
         </div>
-        <q-form class="row q-gutter-sm margin-top-1">
+        <div class="row margin-top-1">
           <div class="col">
-            <q-input
-              outlined
-              clearable
-              lazy-rules
-              v-model="name_search"
-              label="名称"
-              :rules="[]"
-            />
+            <q-form>
+              <div class="row q-pb-sm q-col-gutter-sm">
+                <div class="col-3">
+                  <q-input
+                    outlined
+                    clearable
+                    lazy-rules
+                    v-model="name_search"
+                    label="名称"
+                    :rules="[]"
+                  />
+                </div>
+                <div class="col-3">
+                  <q-input
+                    outlined
+                    clearable
+                    lazy-rules
+                    v-model="uri_search"
+                    label="路由"
+                    :rules="[]"
+                  />
+                </div>
+                <div class="col-3">
+                  <q-input
+                    outlined
+                    clearable
+                    lazy-rules
+                    v-model="description_search"
+                    label="描述"
+                    :rules="[]"
+                  />
+                </div>
+                <div class="col-3">
+                  <SelRbacMenu_search
+                    label-name="所属父级"
+                    v-if="selRbacMenu_search_enable"
+                  />
+                </div>
+                <div class="col-3">
+                  <SelRbacRole_search label-name="所属角色" />
+                </div>
+              </div>
+            </q-form>
           </div>
-          <div class="col">
-            <q-input
-              outlined
-              clearable
-              lazy-rules
-              v-model="uri_search"
-              label="路由"
-              :rules="[]"
-            />
-          </div>
-          <div class="col">
-            <q-input
-              outlined
-              clearable
-              lazy-rules
-              v-model="description_search"
-              label="描述"
-              :rules="[]"
-            />
-          </div>
-          <div class="col">
-            <SelRbacMenu_search
-              labelName="所属父级"
-              v-if="selRbacMenu_search_enable"
-            />
-          </div>
-        </q-form>
+        </div>
       </q-card-section>
 
       <q-card-section>
@@ -152,7 +161,7 @@
                 class="margin-top-1"
               />
               <SelRbacMenu_alertCreate
-                labelName="所属父级"
+                label-name="所属父级"
                 class="margin-top-1"
               />
             </div>
@@ -208,7 +217,7 @@
                 class="margin-top-1"
               />
               <SelRbacMenu_alertEdit
-                labelName="所属父级"
+                label-name="所属父级"
                 :ajax-params="{
                   __neq__: { uuid: currentUuid },
                   not_has_subs: currentUuid,
@@ -238,6 +247,7 @@ import { collect } from "collect.js";
 import SelRbacMenu_search from "src/components/SelRbacMenu_search.vue";
 import SelRbacMenu_alertCreate from "src/components/SelRbacMenu_alertCreate.vue";
 import SelRbacMenu_alertEdit from "src/components/SelRbacMenu_alertEdit.vue";
+import SelRbacRole_search from "src/components/SelRbacRole_search.vue";
 import {
   successNotify,
   errorNotify,
@@ -253,6 +263,7 @@ import {
   ajaxRbacMenuUpdate,
 } from "src/apis/rbac";
 
+// 表格数据
 let columns = [
   {
     name: "name",
@@ -299,19 +310,23 @@ let columns = [
 ];
 let rows = ref([]);
 
-let alertCreateRbacMenu = ref(false);
-let alertEditRbacMenu = ref(false);
+// 表格数据
 let name_search = ref("");
 let uri_search = ref("");
 let description_search = ref("");
 let parentUuid_search = ref("");
-let rbacMenus_search = ref([]);
 let selRbacMenu_search_enable = ref(true);
+let rbacRoleUuid_search = ref("");
 
+// 新建菜单对话框
+let alertCreateRbacMenu = ref(false);
 let name_alertCreateRbacMenu = ref("");
 let uri_alertCreateRbacMenu = ref("");
 let description_alertCreateRbacMenu = ref("");
 let parentUuid_alertCreateRbacMenu = ref("");
+
+// 编辑菜单对话框
+let alertEditRbacMenu = ref(false);
 let rbacMenus_alertEditRbacMenu = ref([]);
 let currentUuid = ref("");
 let name_alertEditRbacMenu = ref("");
@@ -322,47 +337,30 @@ let parentUuid_alertEditRbacMenu = ref("");
 provide("parentUuid_search", parentUuid_search);
 provide("parentUuid_alertCreate", parentUuid_alertCreateRbacMenu);
 provide("parentUuid_alertEdit", parentUuid_alertEditRbacMenu);
+provide("rbacRoleUuid_search", rbacRoleUuid_search);
 
 onMounted(() => {
   fnInit();
 });
 
+/**
+ * 初始化页面
+ */
 let fnInit = () => {
-  fnGetParentRbacMenus();
   fnSearch();
 };
 /**
- * 获取父级菜单
+ * 搜索
  */
-let fnGetParentRbacMenus = () => {
-  ajaxRbacMenuList(
-    collect({
-      parentUuid: "",
-    })
-      .filter((val) => {
-        return val;
-      })
-      .all()
-  ).then((res) => {
-    if (res.content.rbac_menus.length > 0) {
-      collect(res.content.rbac_menus).each((rbacMenu) => {
-        rbacMenus_search.value.push({
-          label: rbacMenu.name,
-          value: rbacMenu.uuid,
-        });
-      });
-    }
-  });
-};
-
 let fnSearch = () => {
   rows.value = [];
   ajaxRbacMenuList({
+    "__preloads__[]": ["Parent"],
     name: name_search.value,
     uri: uri_search.value,
     description: description_search.value,
     parent_uuid: parentUuid_search.value,
-    "__preloads__[]": ["Parent"],
+    rbac_role_uuid: rbacRoleUuid_search.value,
   })
     .then((res) => {
       if (res.content.rbac_menus.length > 0) {
@@ -385,26 +383,35 @@ let fnSearch = () => {
       selRbacMenu_search_enable.value = true;
     });
 };
-
+/**
+ * 初始化搜索栏
+ */
 let fnResetSearch = () => {
   name_search.value = "";
   uri_search.value = "";
   description_search.value = "";
   parentUuid_search.value = "";
+  rbacRoleUuid_search.value = "";
 };
-
+/**
+ * 重置新建菜单对话框
+ */
 let fnResetAlertCreateRbace = () => {
   name_alertCreateRbacMenu.value = "";
   uri_alertCreateRbacMenu.value = "";
   description_alertCreateRbacMenu.value = "";
   parentUuid_alertCreateRbacMenu.value = "";
 };
-
+/**
+ * 打开新建菜单对话框
+ */
 let fnOpenAlertCreateRbacMenu = () => {
   fnResetAlertCreateRbace();
   alertCreateRbacMenu.value = true;
 };
-
+/**
+ * 新建菜单
+ */
 let fnStoreRbacMenu = () => {
   let loading = loadingNotify();
 
@@ -416,7 +423,6 @@ let fnStoreRbacMenu = () => {
   })
     .then((res) => {
       successNotify(res.msg, 500);
-      fnGetParentRbacMenus();
       fnSearch();
     })
     .catch((err) => {
@@ -426,7 +432,9 @@ let fnStoreRbacMenu = () => {
       loading();
     });
 };
-
+/**
+ * 重置编辑菜单对话框
+ */
 let fnResetAlertEditRbacMenu = () => {
   rbacMenus_alertEditRbacMenu.value = [];
   currentUuid.value = "";
@@ -435,7 +443,10 @@ let fnResetAlertEditRbacMenu = () => {
   description_alertEditRbacMenu.value = "";
   parentUuid_alertEditRbacMenu.value = "";
 };
-
+/**
+ * 打开编辑菜单对话框
+ * @param {{uuid:string}} params 参数
+ */
 let fnOpenAlertEditRbacMenu = (params = {}) => {
   if (!params.hasOwnProperty("uuid")) return;
   if (!params.uuid) return;
@@ -458,7 +469,9 @@ let fnOpenAlertEditRbacMenu = (params = {}) => {
       errorNotify(e.msg);
     });
 };
-
+/**
+ * 编辑菜单
+ */
 let fnUpdateRbacMenu = () => {
   if (!currentUuid.value) return;
   let loading = loadingNotify();
@@ -470,7 +483,6 @@ let fnUpdateRbacMenu = () => {
   })
     .then((res) => {
       successNotify(res.msg);
-      fnGetParentRbacMenus();
       fnSearch();
     })
     .catch((e) => {
@@ -480,7 +492,10 @@ let fnUpdateRbacMenu = () => {
       loading();
     });
 };
-
+/**
+ * 删除菜单
+ * @param {{uuid:string}} params 参数
+ */
 let fnDeleteRbacMenu = (params = {}) => {
   if (!params.uuid) return;
 
@@ -490,7 +505,6 @@ let fnDeleteRbacMenu = (params = {}) => {
       ajaxRbacMenuDestroy(params.uuid)
         .then(() => {
           successNotify("删除成功");
-          fnGetParentRbacMenus();
           fnSearch();
         })
         .catch((e) => {

@@ -5,6 +5,7 @@
     clearable
     v-model="rbacRoleUuid_search"
     :options="rbacRoles_search"
+    :display-value="rbacRoles.find((val) => val === rbacRoleUuid_search)"
     :label="labelName"
     @filter="fnFilter"
     emit-value
@@ -17,7 +18,7 @@ import { ajaxRbacRoleList } from "/src/apis/rbac";
 import collect from "collect.js";
 import { errorNotify } from "src/tools/notify";
 
-const props = defineProps({
+let props = defineProps({
   labelName: {
     type: String,
     default: "",
@@ -31,13 +32,13 @@ const props = defineProps({
   },
 });
 
-const labelName = props.labelName;
-const ajaxParams = props.ajaxParams;
-const rbacRoleUuid_search = inject("rbacRoleUuid_search");
-const rbacRoles_search = ref([]);
-const rbacRoles = ref([]);
+let labelName = props.labelName;
+let ajaxParams = props.ajaxParams;
+let rbacRoleUuid_search = inject("rbacRoleUuid_search");
+let rbacRoles_search = ref([]);
+let rbacRoles = ref([]);
 
-const fnFilter = (val, update) => {
+let fnFilter = (val, update) => {
   if (val === "") {
     update(() => {
       rbacRoles_search.value = rbacRoles.value;
