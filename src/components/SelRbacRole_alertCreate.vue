@@ -3,25 +3,38 @@
     outlined
     use-input
     clearable
-    v-model="rbacRoleUuid_alertCreate"
+    v-model="rbacRoleUuids_alertCreate"
     :options="options"
+    :filter="fnFilter"
     :label="labelName"
+    :display-value="
+      rbacRoleUuids_alertCreate
+        ? rbacRoleUuids_alertCreate.map((val) => {
+            return rbacRolesMap[val];
+          })
+        : ''
+    "
+    :multiple="multiple"
     @filter="fnFilter"
     emit-value
     map-options
   />
 </template>
 <script setup>
-import { inject, defineProps, onMounted, ref } from "vue";
-import { ajaxRbacRoleList } from "/src/apis/rbac";
+import { inject, defineProps, onMounted, ref, computed } from "vue";
 import collect from "collect.js";
+import { ajaxRbacRoleList } from "/src/apis/rbac";
 import { errorNotify } from "src/tools/notify";
 
-const props = defineProps({
+let props = defineProps({
   labelName: {
     type: String,
     default: "",
     required: true,
+  },
+  multiple: {
+    type: Boolean,
+    default: false,
   },
   ajaxParams: {
     type: Object,
@@ -31,13 +44,32 @@ const props = defineProps({
   },
 });
 
-const labelName = props.labelName;
-const ajaxParams = props.ajaxParams;
-const rbacRoleUuid_alertCreate = inject("rbacRoleUuid_alertCreate");
-const options = ref([]);
-const rbacRoles = ref([]);
+let labelName = props.labelName;
+let ajaxParams = props.ajaxParams;
+let rbacRoleUuids_alertCreate = inject("rbacRoleUuids_alertCreate");
+let options = ref([]);
+let rbacRoles = ref([]);
+let rbacRolesMap = ref({});
 
-const fnFilter = (val, update) => {
+onMounted(() => {
+  ajaxRbacRoleList(ajaxParams)
+    .then((res) => {
+      if (res.content.rbac_roles.length > 0) {
+        collect(res.content.rbac_roles).each((rbacRole) => {
+          rbacRoles.value.push({
+            label: rbacRole.name,
+            value: rbacRole.uuid,
+          });
+          rbacRolesMap.value[rbacRole.uuid] = rbacRole.name;
+        });
+      }
+    })
+    .catch((e) => {
+      errorNotify(e.msg);
+    });
+});
+
+let fnFilter = (val, update) => {
   if (val === "") {
     update(() => {
       options.value = rbacRoles.value;
@@ -51,21 +83,4 @@ const fnFilter = (val, update) => {
     );
   });
 };
-
-onMounted(() => {
-  ajaxRbacRoleList(ajaxParams)
-    .then((res) => {
-      if (res.content.rbacRoles.length > 0) {
-        collect(res.content.rbacRoles).each((rbacRole) => {
-          rbacRoles.value.push({
-            label: rbacRole.name,
-            value: rbacRole.uuid,
-          });
-        });
-      }
-    })
-    .catch((e) => {
-      errorNotify(e.msg);
-    });
-});
 </script>

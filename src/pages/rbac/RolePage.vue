@@ -192,7 +192,7 @@ let columns = [
   {
     name: "operation",
     field: "operation",
-    label: "操作",
+    label: "",
     align: "left",
     sortable: true,
   },
@@ -215,6 +215,12 @@ let fnInit = () => {
   fnSearch();
 };
 /**
+ * 重置搜索栏
+ */
+let fnResetSearch = () => {
+  name_search.value = "";
+};
+/**
  * 搜索
  */
 let fnSearch = () => {
@@ -227,8 +233,8 @@ let fnSearch = () => {
       .filter((val) => !val)
       .all()
   ).then((res) => {
-    if (res.content.rbacRoles.length > 0) {
-      collect(res.content.rbacRoles).each((rbacRole) => {
+    if (res.content.rbac_roles.length > 0) {
+      collect(res.content.rbac_roles).each((rbacRole) => {
         rows.value.push({
           name: rbacRole.name,
           operation: { uuid: rbacRole.uuid },
@@ -287,8 +293,8 @@ let fnOpenAlertEditRbacRole = (params = {}) => {
 
   ajaxRbacRoleDetail(currentUuid.value)
     .then((res) => {
-      if (res.content.rbacRole) {
-        name_alertEditRbacRole.value = res.content.rbacRole.name;
+      if (res.content.rbac_role) {
+        name_alertEditRbacRole.value = res.content.rbac_role.name;
         alertEditRbacRole.value = true;
       }
     })

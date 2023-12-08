@@ -58,8 +58,8 @@ const fnFilter = (val, update) => {
 onMounted(() => {
   ajaxRbacMenuList(ajaxParams)
     .then((res) => {
-      if (res.content.rbacMenus.length > 0) {
-        collect(res.content.rbacMenus).each((rbacMenu) => {
+      if (res.content.rbac_menus.length > 0) {
+        collect(res.content.rbac_menus).each((rbacMenu) => {
           rbacMenus.value.push({
             label: rbacMenu.name,
             value: rbacMenu.uuid,

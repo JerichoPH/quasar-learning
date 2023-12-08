@@ -55,8 +55,8 @@ const fnFilter = (val, update) => {
 onMounted(() => {
   ajaxRbacRoleList(ajaxParams)
     .then((res) => {
-      if (res.content.rbacRoles.length > 0) {
-        collect(res.content.rbacRoles).each((rbacRole) => {
+      if (res.content.rbac_roles.length > 0) {
+        collect(res.content.rbac_roles).each((rbacRole) => {
           rbacRoles.value.push({
             label: rbacRole.name,
             value: rbacRole.uuid,

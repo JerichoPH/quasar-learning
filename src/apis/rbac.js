@@ -58,10 +58,11 @@ export const ajaxRbacPermissionList = (params = {}) => {
 /**
  * 权限详情
  * @param {string} uuid 唯一编号
+ * @param {{*}} params 参数
  * @returns
  */
-export const ajaxRbacPermissionDetail = (uuid = '') => {
-  return api.get(`/rbac/permission/${uuid}`);
+export const ajaxRbacPermissionDetail = (uuid = '', params = {}) => {
+  return api.get(`/rbac/permission/${uuid}`, { params });
 }
 
 /**

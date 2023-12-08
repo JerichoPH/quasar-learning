@@ -25,7 +25,7 @@
         <q-form class="row q-gutter-sm margin-top-1">
           <div class="col">
             <q-input
-              filled
+              outlined
               clearable
               lazy-rules
               v-model="name_search"
@@ -35,7 +35,7 @@
           </div>
           <div class="col">
             <q-input
-              filled
+              outlined
               clearable
               lazy-rules
               v-model="uri_search"
@@ -45,7 +45,7 @@
           </div>
           <div class="col">
             <q-input
-              filled
+              outlined
               clearable
               lazy-rules
               v-model="description_search"
@@ -119,11 +119,11 @@
         <div class="text-h6">新建菜单</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
-        <q-form class="q-gutter-md">
+        <q-form class="q-gutter-md" @submit.prevent="">
           <div class="row">
             <div class="col">
               <q-input
-                filled
+                outlined
                 clearable
                 lazy-rules
                 v-model="name_alertCreateRbacMenu"
@@ -131,7 +131,7 @@
                 :rules="[]"
               />
               <q-input
-                filled
+                outlined
                 clearable
                 lazy-rules
                 v-model="uri_alertCreateRbacMenu"
@@ -140,7 +140,7 @@
                 class="margin-top-1"
               />
               <q-input
-                filled
+                outlined
                 clearable
                 lazy-rules
                 v-model="description_alertCreateRbacMenu"
@@ -175,11 +175,11 @@
         <div class="text-h6">编辑菜单</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
-        <q-form class="q-gutter-md">
+        <q-form class="q-gutter-md" @submit.prevent="">
           <div class="row">
             <div class="col">
               <q-input
-                filled
+                outlined
                 clearable
                 lazy-rules
                 v-model="name_alertEditRbacMenu"
@@ -187,7 +187,7 @@
                 :rules="[]"
               />
               <q-input
-                filled
+                outlined
                 clearable
                 lazy-rules
                 v-model="uri_alertEditRbacMenu"
@@ -196,7 +196,7 @@
                 class="margin-top-1"
               />
               <q-input
-                filled
+                outlined
                 clearable
                 lazy-rules
                 v-model="description_alertEditRbacMenu"
@@ -298,7 +298,7 @@ const columns = [
   },
   {
     name: "operation",
-    label: "操作",
+    label: "",
     field: "operation",
     align: "left",
     sortable: true,
@@ -329,8 +329,8 @@ const fnGetParentRbacMenus = () => {
       })
       .all()
   ).then((res) => {
-    if (res.content.rbacMenus.length > 0) {
-      collect(res.content.rbacMenus).each((rbacMenu) => {
+    if (res.content.rbac_menus.length > 0) {
+      collect(res.content.rbac_menus).each((rbacMenu) => {
         rbacMenus_search.value.push({
           label: rbacMenu.name,
           value: rbacMenu.uuid,
@@ -355,8 +355,8 @@ const fnSearch = () => {
       })
       .all()
   ).then((res) => {
-    if (res.content.rbacMenus.length > 0) {
-      collect(res.content.rbacMenus).each((rbacMenu) => {
+    if (res.content.rbac_menus.length > 0) {
+      collect(res.content.rbac_menus).each((rbacMenu) => {
         rows.value.push({
           name: rbacMenu.name,
           uri: rbacMenu.uri,
@@ -430,12 +430,11 @@ const fnOpenAlertEditRbacMenu = (params = {}) => {
 
   ajaxRbacMenuDetail(currentUuid.value, { "__preloads__[]": ["Parent"] })
     .then((res) => {
-      const { rbacMenu } = res.content;
-      name_alertEditRbacMenu.value = rbacMenu.name;
-      uri_alertEditRbacMenu.value = rbacMenu.uri;
-      description_alertEditRbacMenu.value = rbacMenu.description;
-      parentUuid_alertEditRbacMenu.value = rbacMenu.parent
-        ? rbacMenu.parent.uuid
+      name_alertEditRbacMenu.value = res.content.rbac_menu.name;
+      uri_alertEditRbacMenu.value = res.content.rbac_menu.uri;
+      description_alertEditRbacMenu.value = res.content.rbac_menu.description;
+      parentUuid_alertEditRbacMenu.value = res.content.rbac_menu.parent
+        ? res.content.rbac_menu.parent.uuid
         : "";
     })
     .catch((e) => {
