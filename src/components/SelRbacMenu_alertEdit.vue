@@ -19,7 +19,7 @@ import { ajaxRbacMenuList } from "/src/apis/rbac";
 import collect from "collect.js";
 import { errorNotify } from "src/tools/notify";
 
-const props = defineProps({
+let props = defineProps({
   labelName: {
     type: String,
     default: "",
@@ -33,14 +33,14 @@ const props = defineProps({
   },
 });
 
-const labelName = props.labelName;
-const ajaxParams = props.ajaxParams;
-const parentUuid_alertEdit = inject("parentUuid_alertEdit");
-const options = ref([]);
-const rbacMenus = ref([]);
-const rbacMenusMap = ref({});
+let labelName = props.labelName;
+let ajaxParams = props.ajaxParams;
+let parentUuid_alertEdit = inject("parentUuid_alertEdit");
+let options = ref([]);
+let rbacMenus = ref([]);
+let rbacMenusMap = ref({});
 
-const fnFilter = (val, update) => {
+let fnFilter = (val, update) => {
   if (val === "") {
     update(() => {
       options.value = rbacMenus.value;

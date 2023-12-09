@@ -21,12 +21,12 @@
   />
 </template>
 <script setup>
-import { inject, defineProps, onMounted, ref, computed } from "vue";
+import { inject, defineProps, onMounted, ref } from "vue";
 import collect from "collect.js";
 import { ajaxRbacRoleList } from "/src/apis/rbac";
 import { errorNotify } from "src/tools/notify";
 
-const props = defineProps({
+let props = defineProps({
   labelName: {
     type: String,
     default: "",
@@ -44,13 +44,13 @@ const props = defineProps({
   },
 });
 
-const labelName = props.labelName;
-const ajaxParams = props.ajaxParams;
-const multiple = props.multiple;
-const rbacRoleUuids_alertCreate = inject("rbacRoleUuids_alertCreate");
-const options = ref([]);
-const rbacRoles = ref([]);
-const rbacRolesMap = ref({});
+let labelName = props.labelName;
+let ajaxParams = props.ajaxParams;
+let multiple = props.multiple;
+let rbacRoleUuids_alertCreate = inject("rbacRoleUuids_alertCreate");
+let options = ref([]);
+let rbacRoles = ref([]);
+let rbacRolesMap = ref({});
 
 onMounted(() => {
   ajaxRbacRoleList(ajaxParams)
@@ -71,7 +71,7 @@ onMounted(() => {
     });
 });
 
-const fnFilter = (val, update) => {
+let fnFilter = (val, update) => {
   if (val === "") {
     update(() => {
       options.value = rbacRoles.value;

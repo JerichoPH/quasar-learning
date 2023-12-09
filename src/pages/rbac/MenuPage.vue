@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-card>
       <q-card-section>
-        <div class="row margin-top-1">
+        <div class="row q-mb-md">
           <div class="col"><span style="font-size: 20px">搜索</span></div>
           <div class="col text-right">
             <q-btn-group>
@@ -22,10 +22,10 @@
             </q-btn-group>
           </div>
         </div>
-        <div class="row margin-top-1">
+        <div class="row">
           <div class="col">
             <q-form>
-              <div class="row q-pb-sm q-col-gutter-sm">
+              <div class="row q-col-gutter-sm">
                 <div class="col-3">
                   <q-input
                     outlined
@@ -72,7 +72,7 @@
       </q-card-section>
 
       <q-card-section>
-        <div class="row margin-top-1">
+        <div class="row q-mt-md">
           <div class="col">
             <q-table
               flat
@@ -80,22 +80,42 @@
               title="菜单列表"
               :rows="rows"
               :columns="columns"
-              row-key="name"
+              row-key="index"
               color="amber"
+              virtual-scroll
               :pagination="{ rowsPerPage: 200 }"
               :rows-per-page-options="[50, 100, 200, 0]"
               rows-per-page-label="分页"
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
+                  <q-td key="index" :props="props">
+                    {{ props.row.index + 1 }}
+                  </q-td>
                   <q-td key="name" :props="props">{{ props.row.name }}</q-td>
                   <q-td key="uri" :props="props">{{ props.row.uri }}</q-td>
                   <q-td key="description" :props="props">
                     {{ props.row.description }}
                   </q-td>
-                  <q-td key="parentName" :props="props">{{
-                    props.row.parentName
-                  }}</q-td>
+                  <q-td key="parentName" :props="props">
+                    <q-chip
+                      color="primary"
+                      text-color="white"
+                      v-if="props.row.parentName"
+                    >
+                      {{ props.row.parentName }}
+                    </q-chip>
+                  </q-td>
+                  <q-td key="rbacRoles" :props="props">
+                    <q-chip
+                      color="primary"
+                      text-color="white"
+                      v-for="(rbacRole, idx) in props.row.rbacRoles"
+                      :key="idx"
+                    >
+                      {{ rbacRole.name }}
+                    </q-chip>
+                  </q-td>
                   <q-td key="operation" :props="props">
                     <q-btn-group>
                       <q-btn
@@ -141,6 +161,7 @@
                 v-model="name_alertCreateRbacMenu"
                 label="名称"
                 :rules="[]"
+                class="q-mb-md"
               />
               <q-input
                 outlined
@@ -149,7 +170,7 @@
                 v-model="uri_alertCreateRbacMenu"
                 label="路由"
                 :rules="[]"
-                class="margin-top-1"
+                class="q-mb-md"
               />
               <q-input
                 outlined
@@ -158,17 +179,10 @@
                 v-model="description_alertCreateRbacMenu"
                 label="描述"
                 :rules="[]"
-                class="margin-top-1"
+                class="q-mb-md"
               />
-              <SelRbacMenu_alertCreate
-                label-name="所属父级"
-                class="margin-top-1"
-              />
-              <SelRbacRole_alertCreate
-                label-name="所属角色"
-                multiple="true"
-                class="margin-top-1"
-              />
+              <SelRbacMenu_alertCreate labelName="所属父级" class="q-mb-md" />
+              <ChkRbacRole_alertCreate labelName="所属角色" />
             </div>
           </div>
         </q-form>
@@ -210,7 +224,7 @@
                 v-model="uri_alertEditRbacMenu"
                 label="路由"
                 :rules="[]"
-                class="margin-top-1"
+                class="q-mt-md"
               />
               <q-input
                 outlined
@@ -219,15 +233,23 @@
                 v-model="description_alertEditRbacMenu"
                 label="描述"
                 :rules="[]"
-                class="margin-top-1"
+                class="q-mt-md"
               />
               <SelRbacMenu_alertEdit
-                label-name="所属父级"
-                :ajax-params="{
+                labelName="所属父级"
+                :ajaxParams="{
                   __neq__: { uuid: currentUuid },
                   not_has_subs: currentUuid,
                 }"
-                class="margin-top-1"
+                class="q-mt-md"
+              />
+              <ChkRbacRole_alertEdit
+                labelName="所属角色"
+                :ajaxParams="{
+                  '__prefloads__[]': ['RbacRoles'],
+                  uuid: currentUuid,
+                }"
+                class="q-mt-md"
               />
             </div>
           </div>
@@ -253,8 +275,8 @@ import SelRbacMenu_search from "src/components/SelRbacMenu_search.vue";
 import SelRbacMenu_alertCreate from "src/components/SelRbacMenu_alertCreate.vue";
 import SelRbacMenu_alertEdit from "src/components/SelRbacMenu_alertEdit.vue";
 import SelRbacRole_search from "src/components/SelRbacRole_search.vue";
-import SelRbacRole_alertCreate from "src/components/SelRbacRole_alertCreate.vue";
-import SelRbacRole_alertEdit from "src/components/SelRbacRole_alertEdit.vue";
+import ChkRbacRole_alertCreate from "src/components/ChkRbacRole_alertCreate.vue";
+import ChkRbacRole_alertEdit from "src/components/ChkRbacRole_alertEdit.vue";
 import {
   successNotify,
   errorNotify,
@@ -271,7 +293,12 @@ import {
 } from "src/apis/rbac";
 
 // 表格数据
-const columns = [
+let columns = [
+  {
+    name: "index",
+    label: "#",
+    field: "index",
+  },
   {
     name: "name",
     field: "name",
@@ -315,40 +342,41 @@ const columns = [
     sortable: true,
   },
 ];
-const rows = ref([]);
+let rows = ref([]);
 
 // 表格数据
-const name_search = ref("");
-const uri_search = ref("");
-const description_search = ref("");
-const parentUuid_search = ref("");
-const selRbacMenu_search_enable = ref(true);
-const rbacRoleUuid_search = ref("");
+let name_search = ref("");
+let uri_search = ref("");
+let description_search = ref("");
+let parentUuid_search = ref("");
+let selRbacMenu_search_enable = ref(true);
+let rbacRoleUuid_search = ref("");
+let selected = ref("");
 
 // 新建菜单对话框
-const alertCreateRbacMenu = ref(false);
-const name_alertCreateRbacMenu = ref("");
-const uri_alertCreateRbacMenu = ref("");
-const description_alertCreateRbacMenu = ref("");
-const parentUuid_alertCreateRbacMenu = ref("");
-const rbacRoleUuids_alertCreateRbacMenu = ref(null);
+let alertCreateRbacMenu = ref(false);
+let name_alertCreateRbacMenu = ref("");
+let uri_alertCreateRbacMenu = ref("");
+let description_alertCreateRbacMenu = ref("");
+let parentUuid_alertCreateRbacMenu = ref("");
+let rbacRoleUuids_alertCreateRbacMenu = ref([]);
 
 // 编辑菜单对话框
-const alertEditRbacMenu = ref(false);
-const rbacMenus_alertEditRbacMenu = ref([]);
-const currentUuid = ref("");
-const name_alertEditRbacMenu = ref("");
-const uri_alertEditRbacMenu = ref("");
-const description_alertEditRbacMenu = ref("");
-const parentUuid_alertEditRbacMenu = ref("");
-const rbacRoleUuids_alertEditRbacMenu = ref(null);
+let alertEditRbacMenu = ref(false);
+let rbacMenus_alertEditRbacMenu = ref([]);
+let currentUuid = ref("");
+let name_alertEditRbacMenu = ref("");
+let uri_alertEditRbacMenu = ref("");
+let description_alertEditRbacMenu = ref("");
+let parentUuid_alertEditRbacMenu = ref("");
+let rbacRoleUuids_alertEditRbacMenu = ref([]);
 
 provide("parentUuid_search", parentUuid_search);
 provide("parentUuid_alertCreate", parentUuid_alertCreateRbacMenu);
 provide("parentUuid_alertEdit", parentUuid_alertEditRbacMenu);
 provide("rbacRoleUuid_search", rbacRoleUuid_search);
-provide("rbacRoleUuids_alertCreate", rbacRoleUuids_alertCreateRbacMenu);
-provide("rbacRoleUuids_alertEdit", rbacRoleUuids_alertEditRbacMenu);
+provide("checkedRbacRoleUuids_alertCreate", rbacRoleUuids_alertCreateRbacMenu);
+provide("checkedRbacRoleUuids_alertEdit", rbacRoleUuids_alertEditRbacMenu);
 
 onMounted(() => {
   fnInit();
@@ -357,16 +385,26 @@ onMounted(() => {
 /**
  * 初始化页面
  */
-const fnInit = () => {
+let fnInit = () => {
   fnSearch();
+};
+/**
+ * 重置搜索栏
+ */
+let fnResetSearch = () => {
+  name_search.value = "";
+  uri_search.value = "";
+  description_search.value = "";
+  parentUuid_search.value = "";
+  rbacRoleUuid_search.value = "";
 };
 /**
  * 搜索
  */
-const fnSearch = () => {
+let fnSearch = () => {
   rows.value = [];
   ajaxRbacMenuList({
-    "__preloads__[]": ["Parent"],
+    "__preloads__[]": ["Parent", "RbacRoles"],
     name: name_search.value,
     uri: uri_search.value,
     description: description_search.value,
@@ -375,12 +413,14 @@ const fnSearch = () => {
   })
     .then((res) => {
       if (res.content.rbac_menus.length > 0) {
-        collect(res.content.rbac_menus).each((rbacMenu) => {
+        collect(res.content.rbac_menus).each((rbacMenu, idx) => {
           rows.value.push({
+            index: idx,
             name: rbacMenu.name,
             uri: rbacMenu.uri,
             description: rbacMenu.description,
-            parentName: rbacMenu.parent ? rbacMenu.parent.name : "无",
+            parentName: rbacMenu.parent,
+            rbacRoles: rbacMenu.rbac_roles || [],
             operation: { uuid: rbacMenu.uuid },
           });
         });
@@ -395,19 +435,19 @@ const fnSearch = () => {
     });
 };
 /**
- * 初始化搜索栏
+ * 获取选中的行
  */
-const fnResetSearch = () => {
-  name_search.value = "";
-  uri_search.value = "";
-  description_search.value = "";
-  parentUuid_search.value = "";
-  rbacRoleUuid_search.value = "";
+let getSelectedString = () => {
+  return selected.value.length === 0
+    ? ""
+    : `${selected.value.length} record${
+        selected.value.length > 1 ? "s" : ""
+      } selected of ${rows.value.length}`;
 };
 /**
  * 重置新建菜单对话框
  */
-const fnResetAlertCreateRbace = () => {
+let fnResetAlertCreateRbace = () => {
   name_alertCreateRbacMenu.value = "";
   uri_alertCreateRbacMenu.value = "";
   description_alertCreateRbacMenu.value = "";
@@ -417,21 +457,22 @@ const fnResetAlertCreateRbace = () => {
 /**
  * 打开新建菜单对话框
  */
-const fnOpenAlertCreateRbacMenu = () => {
+let fnOpenAlertCreateRbacMenu = () => {
   fnResetAlertCreateRbace();
   alertCreateRbacMenu.value = true;
 };
 /**
  * 新建菜单
  */
-const fnStoreRbacMenu = () => {
-  const loading = loadingNotify();
+let fnStoreRbacMenu = () => {
+  let loading = loadingNotify();
 
   ajaxRbacMenuStore({
     name: name_alertCreateRbacMenu.value,
     uri: uri_alertCreateRbacMenu.value,
     description: description_alertCreateRbacMenu.value,
     parent_uuid: parentUuid_alertCreateRbacMenu.value,
+    rbac_role_uuids: rbacRoleUuids_alertCreateRbacMenu.value,
   })
     .then((res) => {
       successNotify(res.msg, 500);
@@ -447,7 +488,7 @@ const fnStoreRbacMenu = () => {
 /**
  * 重置编辑菜单对话框
  */
-const fnResetAlertEditRbacMenu = () => {
+let fnResetAlertEditRbacMenu = () => {
   rbacMenus_alertEditRbacMenu.value = [];
   currentUuid.value = "";
   name_alertEditRbacMenu.value = "";
@@ -460,14 +501,16 @@ const fnResetAlertEditRbacMenu = () => {
  * 打开编辑菜单对话框
  * @param {{uuid:string}} params 参数
  */
-const fnOpenAlertEditRbacMenu = (params = {}) => {
+let fnOpenAlertEditRbacMenu = (params = {}) => {
   if (!params.hasOwnProperty("uuid")) return;
   if (!params.uuid) return;
 
   fnResetAlertEditRbacMenu();
   currentUuid.value = params.uuid;
 
-  ajaxRbacMenuDetail(currentUuid.value, { "__preloads__[]": ["Parent"] })
+  ajaxRbacMenuDetail(currentUuid.value, {
+    "__preloads__[]": ["Parent", "RbacRoles"],
+  })
     .then((res) => {
       name_alertEditRbacMenu.value = res.content.rbac_menu.name;
       uri_alertEditRbacMenu.value = res.content.rbac_menu.uri;
@@ -489,9 +532,9 @@ const fnOpenAlertEditRbacMenu = (params = {}) => {
 /**
  * 编辑菜单
  */
-const fnUpdateRbacMenu = () => {
+let fnUpdateRbacMenu = () => {
   if (!currentUuid.value) return;
-  const loading = loadingNotify();
+  let loading = loadingNotify();
   ajaxRbacMenuUpdate(currentUuid.value, {
     name: name_alertEditRbacMenu.value,
     uri: uri_alertEditRbacMenu.value,
@@ -514,12 +557,12 @@ const fnUpdateRbacMenu = () => {
  * 删除菜单
  * @param {{uuid:string}} params 参数
  */
-const fnDeleteRbacMenu = (params = {}) => {
+let fnDeleteRbacMenu = (params = {}) => {
   if (!params.uuid) return;
 
   actionNotify(
     getDestroyActions(() => {
-      const loading = loadingNotify();
+      let loading = loadingNotify();
       ajaxRbacMenuDestroy(params.uuid)
         .then(() => {
           successNotify("删除成功");
