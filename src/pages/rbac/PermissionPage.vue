@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-card>
       <q-card-section>
-        <div class="row margin-top-1">
+        <div class="row q-mt-md">
           <div class="col"><span style="font-size: 20px">搜索</span></div>
           <div class="col text-right">
             <q-btn-group>
@@ -22,7 +22,7 @@
             </q-btn-group>
           </div>
         </div>
-        <div class="row margin-top-1">
+        <div class="row q-mt-md">
           <div class="col">
             <q-form>
               <div class="row q-pb-sm q-col-gutter-sm">
@@ -66,7 +66,7 @@
       </q-card-section>
 
       <q-card-section>
-        <div class="row margin-top-1">
+        <div class="row q-mt-md">
           <div class="col">
             <q-table
               flat
@@ -82,6 +82,7 @@
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
+                  <q-td>{{ props.row.index }}</q-td>
                   <q-td key="name" :props="props">{{ props.row.name }}</q-td>
                   <q-td key="uri" :props="props">{{ props.row.uri }}</q-td>
                   <q-td key="description" :props="props">
@@ -145,7 +146,7 @@
                 v-model="uri_alertCreateRbacPermission"
                 label="路由"
                 :rules="[]"
-                class="margin-top-1"
+                class="q-mt-md"
               />
               <q-input
                 outlined
@@ -154,12 +155,12 @@
                 v-model="description_alertCreateRbacPermission"
                 label="描述"
                 :rules="[]"
-                class="margin-top-1"
+                class="q-mt-md"
               />
               <SelRbacRole_alertCreate
                 label-name="所属角色"
                 multiple
-                class="margin-top-1"
+                class="q-mt-md"
               />
             </div>
           </div>
@@ -202,7 +203,7 @@
                 v-model="uri_alertEditRbacPermission"
                 label="路由"
                 :rules="[]"
-                class="margin-top-1"
+                class="q-mt-md"
               />
               <q-input
                 outlined
@@ -211,12 +212,12 @@
                 v-model="description_alertEditRbacPermission"
                 label="描述"
                 :rules="[]"
-                class="margin-top-1"
+                class="q-mt-md"
               />
               <SelRbacRole_alertEdit
                 label-name="所属角色"
                 multiple
-                class="margin-top-1"
+                class="q-mt-md"
               />
             </div>
           </div>
@@ -259,6 +260,12 @@ import {
 // 表格数据
 let columns = [
   {
+    name: "index",
+    field: "index",
+    label: "#",
+    aligen: "left",
+  },
+  {
     name: "name",
     field: "name",
     label: "名称",
@@ -290,7 +297,7 @@ let columns = [
     name: "operation",
     field: "operation",
     label: "",
-    align: "left",
+    align: "right",
     sortable: false,
   },
 ];
@@ -352,8 +359,9 @@ let fnSearch = () => {
   })
     .then((res) => {
       if (res.content.rbac_permissions.length > 0) {
-        collect(res.content.rbac_permissions).each((rbacPermission) => {
+        collect(res.content.rbac_permissions).each((rbacPermission, idx) => {
           rows.value.push({
+            index: idx + 1,
             name: rbacPermission.name,
             uri: rbacPermission.uri,
             description: rbacPermission.description,

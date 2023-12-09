@@ -89,9 +89,7 @@
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
-                  <q-td key="index" :props="props">
-                    {{ props.row.index + 1 }}
-                  </q-td>
+                  <q-td>{{ props.row.index }}</q-td>
                   <q-td key="name" :props="props">{{ props.row.name }}</q-td>
                   <q-td key="uri" :props="props">{{ props.row.uri }}</q-td>
                   <q-td key="description" :props="props">
@@ -298,6 +296,7 @@ let columns = [
     name: "index",
     label: "#",
     field: "index",
+    align: "left",
   },
   {
     name: "name",
@@ -338,7 +337,7 @@ let columns = [
     name: "operation",
     field: "operation",
     label: "",
-    align: "left",
+    align: "right",
     sortable: true,
   },
 ];
@@ -415,7 +414,7 @@ let fnSearch = () => {
       if (res.content.rbac_menus.length > 0) {
         collect(res.content.rbac_menus).each((rbacMenu, idx) => {
           rows.value.push({
-            index: idx,
+            index: idx + 1,
             name: rbacMenu.name,
             uri: rbacMenu.uri,
             description: rbacMenu.description,

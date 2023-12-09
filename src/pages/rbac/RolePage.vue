@@ -59,6 +59,7 @@
             >
               <template v-slot:body="props">
                 <q-tr :props="props">
+                  <q-td>{{ props.row.index }}</q-td>
                   <q-td key="name" :props="props">{{ props.row.name }}</q-td>
                   <q-td key="uri" :props="props">{{ props.row.uri }}</q-td>
                   <q-td key="description" :props="props">
@@ -183,6 +184,12 @@ import {
 let name_search = ref("");
 let columns = [
   {
+    name: "index",
+    field: "index",
+    label: "#",
+    align: "left",
+  },
+  {
     name: "name",
     field: "name",
     label: "名称",
@@ -193,7 +200,7 @@ let columns = [
     name: "operation",
     field: "operation",
     label: "",
-    align: "left",
+    align: "right",
     sortable: true,
   },
 ];
@@ -234,8 +241,9 @@ let fnSearch = () => {
       .all()
   ).then((res) => {
     if (res.content.rbac_roles.length > 0) {
-      collect(res.content.rbac_roles).each((rbacRole) => {
+      collect(res.content.rbac_roles).each((rbacRole, idx) => {
         rows.value.push({
+          index: idx + 1,
           name: rbacRole.name,
           operation: { uuid: rbacRole.uuid },
         });
