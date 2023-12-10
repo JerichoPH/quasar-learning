@@ -25,7 +25,7 @@
 import { ref, onMounted, inject, defineProps } from "vue";
 import collect from "collect.js";
 import { ajaxRbacRoleList } from "src/apis/rbac";
-import { errorNotify } from "src/tools/notify";
+import { errorNotify } from "src/utils/notify";
 
 let props = defineProps({
   labelName: {
@@ -60,3 +60,4 @@ let fnGetRbacRoles = () => {
     });
 };
 </script>
+src/utils/notify

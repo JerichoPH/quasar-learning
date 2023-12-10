@@ -178,7 +178,7 @@
 
 <script>
 import { fabYoutube } from "@quasar/extras/fontawesome-v6";
-import { errorNotify } from "../tools/notify";
+import { errorNotify } from "src/utils/notify";
 
 export default {
   name: "MyLayout",
@@ -277,3 +277,4 @@ export default {
     &:hover
       color: #000
 </style>
+../utils/notify

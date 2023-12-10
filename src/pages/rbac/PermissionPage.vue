@@ -248,7 +248,7 @@ import {
   errorNotify,
   actionNotify,
   getDestroyActions,
-} from "src/tools/notify";
+} from "src/utils/notify";
 import {
   ajaxRbacPermissionList,
   ajaxRbacPermissionDetail,
@@ -510,3 +510,4 @@ let fnDestroyRbacPermission = (params = {}) => {
   );
 };
 </script>
+src/utils/notify

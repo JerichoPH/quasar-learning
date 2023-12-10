@@ -50,12 +50,8 @@
 
 <script>
 import { defineComponent } from "vue";
-import {
-  loadingNotify,
-  successNotify,
-  errorNotify,
-} from "../../tools/notify.js";
-import { ajaxLogin } from "../../apis/auth.js";
+import { loadingNotify, successNotify, errorNotify } from "src/utils/notify.js";
+import { ajaxLogin } from "src/apis/auth.js";
 
 export default defineComponent({
   name: "LoginPage",
@@ -117,3 +113,4 @@ export default defineComponent({
   },
 });
 </script>
+../../utils/notify.js

@@ -1,12 +1,14 @@
 import api from "./api";
 
+let urlPrefix = '/rbac';
+
 /**
  * 角色列表
  * @param {{ * }} params 参数
  * @returns
  */
-export const ajaxRbacRoleList = (params = {}) => {
-  return api.get("/rbac/role", { params });
+export let ajaxRbacRoleList = params => {
+  return api.get(`${urlPrefix}/role`, { params });
 }
 
 /**
@@ -14,8 +16,8 @@ export const ajaxRbacRoleList = (params = {}) => {
  * @param {string} uuid 唯一编号
  * @returns
  */
-export const ajaxRbacRoleDetail = (uuid = '') => {
-  return api.get(`/rbac/role/${uuid}`);
+export let ajaxRbacRoleDetail = uuid => {
+  return api.get(`${urlPrefix}/role/${uuid}`);
 }
 
 /**
@@ -23,8 +25,8 @@ export const ajaxRbacRoleDetail = (uuid = '') => {
  * @param {{*}} params 参数
  * @returns
  */
-export const ajaxRbacRoleStore = (params = {}) => {
-  return api.post("/rbac/role", params);
+export let ajaxRbacRoleStore = params => {
+  return api.post(`${urlPrefix}/role`, params);
 }
 
 /**
@@ -33,8 +35,8 @@ export const ajaxRbacRoleStore = (params = {}) => {
  * @param {{*}} params 参数
  * @returns
  */
-export const ajaxRbacRoleUpdate = (uuid = '', params = {}) => {
-  return api.put(`/rbac/role/${uuid}`, params);
+export let ajaxRbacRoleUpdate = (uuid, params) => {
+  return api.put(`${urlPrefix}/role/${uuid}`, params);
 }
 
 /**
@@ -42,8 +44,8 @@ export const ajaxRbacRoleUpdate = (uuid = '', params = {}) => {
  * @param {string} uuid 唯一编号
  * @returns
  */
-export const ajaxRbacRoleDestroy = (uuid = '') => {
-  return api.delete(`/rbac/role/${uuid}`);
+export let ajaxRbacRoleDestroy = uuid => {
+  return api.delete(`${urlPrefix}/role/${uuid}`);
 }
 
 /**
@@ -51,8 +53,8 @@ export const ajaxRbacRoleDestroy = (uuid = '') => {
  * @param {{*}} params 权限列表
  * @returns
  */
-export const ajaxRbacPermissionList = (params = {}) => {
-  return api.get("/rbac/permission", { params });
+export let ajaxRbacPermissionList = params => {
+  return api.get(`${urlPrefix}/permission`, { params });
 }
 
 /**
@@ -61,8 +63,8 @@ export const ajaxRbacPermissionList = (params = {}) => {
  * @param {{*}} params 参数
  * @returns
  */
-export const ajaxRbacPermissionDetail = (uuid = '', params = {}) => {
-  return api.get(`/rbac/permission/${uuid}`, { params });
+export let ajaxRbacPermissionDetail = (uuid, params) => {
+  return api.get(`${urlPrefix}/permission/${uuid}`, { params });
 }
 
 /**
@@ -70,8 +72,8 @@ export const ajaxRbacPermissionDetail = (uuid = '', params = {}) => {
  * @param {{*}} params 参数
  * @returns
  */
-export const ajaxRbacPermissionStore = (params = {}) => {
-  return api.post("/rbac/permission", params);
+export let ajaxRbacPermissionStore = params => {
+  return api.post(`${urlPrefix}/permission`, params);
 }
 
 /**
@@ -79,8 +81,8 @@ export const ajaxRbacPermissionStore = (params = {}) => {
  * @param {string} uuid 唯一编号
  * @param {{*}} params 参数
  */
-export const ajaxRbacPermissionUpdate = (uuid = '', params = {}) => {
-  return api.put(`/rbac/permission/${uuid}`, params);
+export let ajaxRbacPermissionUpdate = (uuid, params) => {
+  return api.put(`${urlPrefix}/permission/${uuid}`, params);
 }
 
 /**
@@ -88,8 +90,8 @@ export const ajaxRbacPermissionUpdate = (uuid = '', params = {}) => {
  * @param {string} uuid 唯一编号
  * @returns
  */
-export const ajaxRbacPermissionDestory = (uuid = '') => {
-  return api.delete(`/rbac/permission/${uuid}`);
+export let ajaxRbacPermissionDestory = uuid => {
+  return api.delete(`${urlPrefix}/permission/${uuid}`);
 }
 
 /**
@@ -97,8 +99,8 @@ export const ajaxRbacPermissionDestory = (uuid = '') => {
  * @param {{*}} params 参数
  * @returns
  */
-export const ajaxRbacMenuList = (params = {}) => {
-  return api.get("/rbac/menu", { params });
+export let ajaxRbacMenuList = params => {
+  return api.get(`${urlPrefix}/menu`, { params });
 }
 
 /**
@@ -107,8 +109,8 @@ export const ajaxRbacMenuList = (params = {}) => {
  * @param {{*}} params 参数
  * @returns
  */
-export const ajaxRbacMenuDetail = (uuid = '', params = {}) => {
-  return api.get(`/rbac/menu/${uuid}`, { params });
+export let ajaxRbacMenuDetail = (uuid, params) => {
+  return api.get(`${urlPrefix}/menu/${uuid}`, { params });
 }
 
 /**
@@ -116,8 +118,8 @@ export const ajaxRbacMenuDetail = (uuid = '', params = {}) => {
  * @param {{*}} params 参数
  * @returns
  */
-export const ajaxRbacMenuStore = (params = {}) => {
-  return api.post("/rbac/menu", params);
+export let ajaxRbacMenuStore = params => {
+  return api.post(`${urlPrefix}/menu`, params);
 }
 
 /**
@@ -126,8 +128,8 @@ export const ajaxRbacMenuStore = (params = {}) => {
  * @param {{*}} params 参数
  * @returns
  */
-export const ajaxRbacMenuUpdate = (uuid = '', params = {}) => {
-  return api.put(`/rbac/menu/${uuid}`, params);
+export let ajaxRbacMenuUpdate = (uuid, params) => {
+  return api.put(`${urlPrefix}/menu/${uuid}`, params);
 }
 
 /**
@@ -135,6 +137,6 @@ export const ajaxRbacMenuUpdate = (uuid = '', params = {}) => {
  * @param {string} uuid 唯一编号
  * @returns
  */
-export const ajaxRbacMenuDestroy = (uuid = '') => {
-  return api.delete(`/rbac/menu/${uuid}`);
+export let ajaxRbacMenuDestroy = uuid => {
+  return api.delete(`${urlPrefix}/menu/${uuid}`);
 }

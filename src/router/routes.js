@@ -1,9 +1,10 @@
 import ErrorNotFontVue from "pages/ErrorNotFound.vue";
 import MainLayoutVue from "layouts/MainLayout.vue";
-import IndexPage from "pages/IndexPage.vue";
 import AuthLayoutVue from "layouts/AuthLayout.vue";
+import IndexPage from "pages/IndexPage.vue";
 import LoginPage from "pages/auth/LoginPage.vue";
 import RegisterPage from "pages/auth/RegisterPage.vue";
+import AccountPage from "pages/AccountPage.vue";
 import RbacRolePage from "pages/rbac/RolePage.vue";
 import RbacPermissionPage from "pages/rbac/PermissionPage.vue";
 import RbacMenuPage from "pages/rbac/MenuPage.vue";
@@ -20,6 +21,13 @@ const routes = [
     children: [
       { path: "login", component: LoginPage },
       { path: "register", component: RegisterPage },
+    ],
+  },
+  {
+    path: "/account",
+    component: () => MainLayoutVue,
+    children: [
+      { path: "", component: AccountPage },
     ],
   },
   {

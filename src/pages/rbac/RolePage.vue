@@ -179,7 +179,7 @@ import {
   successNotify,
   actionNotify,
   getDestroyActions,
-} from "src/tools/notify";
+} from "src/utils/notify";
 
 let name_search = ref("");
 let columns = [
@@ -352,3 +352,4 @@ let fnDestroyRbacRole = (params = {}) => {
   );
 };
 </script>
+src/utils/notify

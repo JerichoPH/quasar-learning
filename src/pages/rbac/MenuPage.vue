@@ -274,7 +274,7 @@ import {
   loadingNotify,
   actionNotify,
   getDestroyActions,
-} from "src/tools/notify";
+} from "src/utils/notify";
 import {
   ajaxRbacMenuDestroy,
   ajaxRbacMenuDetail,
@@ -558,3 +558,4 @@ let fnDeleteRbacMenu = (params = {}) => {
   );
 };
 </script>
+src/utils/notify
