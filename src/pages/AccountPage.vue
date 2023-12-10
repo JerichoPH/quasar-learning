@@ -101,6 +101,13 @@
                         编辑
                       </q-btn>
                       <q-btn
+                        @click="fnOpenAlertEditPassword(props.row.operation)"
+                        color="warning"
+                        icon="lock"
+                      >
+                        重置密码
+                      </q-btn>
+                      <q-btn
                         @click="fnDestroyAccount(props.row.operation)"
                         color="negative"
                         icon="delete"
@@ -151,6 +158,7 @@
                 outlined
                 clearable
                 lazy-rules
+                type="password"
                 v-model="password_alertCreateAccount"
                 label="密码"
                 :rules="[]"
@@ -160,6 +168,7 @@
                 outlined
                 clearable
                 lazy-rules
+                type="password"
                 v-model="passwordConfirmation_alertCreateAccount"
                 label="确认密码"
                 :rules="[]"
@@ -227,6 +236,59 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <!-- 编辑密码对话框 -->
+  <q-dialog v-model="alertEditPassword">
+    <q-card style="width: 800px">
+      <q-card-section>
+        <div class="text-h6">编辑密码</div>
+      </q-card-section>
+      <q-card-section class="q-pt-none">
+        <q-form class="q-gutter-md" @submit.prevent="">
+          <div class="row">
+            <div class="col">
+              <q-input
+                outlined
+                clearable
+                lazy-rules
+                v-model="oldPassword_alertEditPassword"
+                label="旧密码"
+                :rules="[]"
+                class="q-mb-md"
+              />
+              <q-input
+                outlined
+                clearable
+                lazy-rules
+                v-model="password_alertEditPassword"
+                label="旧密码"
+                :rules="[]"
+                class="q-mb-md"
+              />
+              <q-input
+                outlined
+                clearable
+                lazy-rules
+                v-model="passwordConfirmation_alertEditPassword"
+                label="旧密码"
+                :rules="[]"
+                class="q-mb-md"
+              />
+            </div>
+          </div>
+        </q-form>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn
+          type="button"
+          label="确定"
+          icon="check"
+          color="negative"
+          @click="fnUpdatePassword"
+          v-close-popup
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 <script setup>
 import { ref, onMounted, provide } from "vue";
@@ -237,6 +299,7 @@ import {
   ajaxAccountStore,
   ajaxAccountUpdate,
   ajaxAccountDestroy,
+  ajaxAccountUpdatePassword,
 } from "src/apis/account";
 import {
   loadingNotify,
@@ -306,6 +369,12 @@ let username_alertEditAccount = ref("");
 let nickname_alertEditAccount = ref("");
 let rbacRoleUuids_alertEditAccount = ref([]);
 let currentUuid = ref("");
+
+//  编辑密码对话框数据
+let alertEditPassword = ref(false);
+let oldPassword_alertEditPassword = ref("");
+let password_alertEditPassword = ref("");
+let passwordConfirmation_alertEditPassword = ref("");
 
 provide("rbacRoleUuid_search", rbacRoleUuid_search);
 provide("checkedRbacRoleUuids_alertCreate", rbacRoleUuids_alertCreateAccount);
@@ -403,8 +472,6 @@ let fnStoreAccount = () => {
 let fnResetAlertEditAccount = () => {
   username_alertEditAccount.value = "";
   nickname_alertEditAccount.value = "";
-  password_alertEditAccount.value = "";
-  passwordConfirmation_alertEditAccount.value = "";
   rbacRoleUuids_alertEditAccount.value = [];
 };
 /**
@@ -415,7 +482,7 @@ let fnOpenAlertEditAccount = (params = {}) => {
 
   currentUuid.value = params.uuid;
 
-  ajaxAccountDetail(currentUuid.value, { "__prefloads__[]": ["RbacRoles"] })
+  ajaxAccountDetail(currentUuid.value, { "__preloads__[]": ["RbacRoles"] })
     .then((res) => {
       username_alertEditAccount.value = res.content.account.username;
       nickname_alertEditAccount.value = res.content.account.nickname;
@@ -462,11 +529,54 @@ let fnUpdateAccount = () => {
 let fnDestroyAccount = (params = {}) => {
   if (!params["uuid"]) return;
 
-  let loading = loadingNotify();
+  actionNotify(
+    getDestroyActions(() => {
+      let loading = loadingNotify();
 
-  ajaxAccountDestroy(params.uuid)
+      ajaxAccountDestroy(params.uuid)
+        .then((res) => {
+          successNotify("删除成功");
+          fnSearch();
+        })
+        .catch((e) => {
+          errorNotify(e.msg);
+        })
+        .finally(() => {
+          loading();
+        });
+    })
+  );
+};
+/**
+ * 重置密码对话框
+ */
+let fnResetAlertEditPassword = () => {
+  oldPassword_alertEditPassword.value = "";
+  password_alertEditPassword.value = "";
+  passwordConfirmation_alertEditPassword.value = "";
+};
+/**
+ * 打开编辑密码对话框
+ */
+let fnOpenAlertEditPassword = (params = {}) => {
+  if (!params["uuid"]) return;
+  currentUuid.value = params.uuid;
+  alertEditPassword.value = true;
+};
+/**
+ * 编辑密码
+ */
+let fnUpdatePassword = () => {
+  if (!currentUuid.value) return;
+
+  let loading = loadingNotify();
+  ajaxAccountUpdatePassword(currentUuid.value, {
+    old_password: oldPassword_alertEditPassword.value,
+    password: password_alertEditPassword.value,
+    password_confirmation: passwordConfirmation_alertEditPassword.value,
+  })
     .then((res) => {
-      successNotify("删除成功");
+      successNotify(res.msg);
       fnSearch();
     })
     .catch((e) => {

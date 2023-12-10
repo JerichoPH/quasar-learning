@@ -2,8 +2,8 @@ import api from 'src/apis/api';
 
 let urlPrefix = '/account';
 
-export let ajaxAccountList = parmas => {
-  return api.get(urlPrefix, { parmas });
+export let ajaxAccountList = params => {
+  return api.get(urlPrefix, { params });
 };
 
 export let ajaxAccountDetail = (uuid, params) => {
@@ -20,4 +20,8 @@ export let ajaxAccountUpdate = (uuid, params) => {
 
 export let ajaxAccountDestroy = uuid => {
   return api.delete(`${urlPrefix}/${uuid}`);
+};
+
+export let ajaxAccountUpdatePassword = (uuid, params) => {
+  return api.put(`${urlPrefix}/${uuid}/password`, params);
 };

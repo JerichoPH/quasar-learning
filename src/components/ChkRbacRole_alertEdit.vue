@@ -8,14 +8,12 @@
           v-for="(rbacRole, rbacRoleIdx) in items"
           :key="rbacRoleIdx"
         >
-          <q-checkbox-group>
-            <q-checkbox
-              v-model="checkedRbacRoleUuids_alertEdit"
-              :val="rbacRole.uuid"
-              :key="rbacRole.uuid"
-              :label="rbacRole.name"
-            />
-          </q-checkbox-group>
+          <q-checkbox
+            v-model="checkedRbacRoleUuids_alertEdit"
+            :val="rbacRole.uuid"
+            :key="rbacRole.uuid"
+            :label="rbacRole.name"
+          />
         </div>
       </div>
     </q-card-section>

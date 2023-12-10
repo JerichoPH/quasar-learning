@@ -14,16 +14,4 @@
   </q-layout>
 </template>
 
-<script>
-import { defineComponent, ref } from "vue";
-
-export default defineComponent({
-  name: "AuthLayout",
-
-  components: {},
-
-  setup() {
-    return {};
-  },
-});
-</script>
+<script setup></script>
