@@ -88,8 +88,16 @@
                   <q-td key="description" :props="props">
                     {{ props.row.description }}
                   </q-td>
-                  <q-td key="rbacRoles" :props="props"
-                    >{{ props.row.rbacRoles.name }}
+                  <q-td key="rbacRoles" :props="props">
+                    {{ props.row.rbacRoles.name }}
+                    <q-chip
+                      v-for="(rbacRole, idx) in props.row.rbacRoles"
+                      :key="idx"
+                      color="primary"
+                      text-color="white"
+                    >
+                      {{ rbacRole.name }}
+                    </q-chip>
                   </q-td>
                   <q-td key="operation" :props="props">
                     <q-btn-group>
@@ -157,11 +165,7 @@
                 :rules="[]"
                 class="q-mt-md"
               />
-              <SelRbacRole_alertCreate
-                label-name="所属角色"
-                multiple
-                class="q-mt-md"
-              />
+              <ChkRbacRole_alertCreate labelName="所属角色" class="q-mt-md" />
             </div>
           </div>
         </q-form>
@@ -214,11 +218,7 @@
                 :rules="[]"
                 class="q-mt-md"
               />
-              <SelRbacRole_alertEdit
-                label-name="所属角色"
-                multiple
-                class="q-mt-md"
-              />
+              <ChkRbacRole_alertEdit labelName="所属角色" class="q-mt-md" />
             </div>
           </div>
         </q-form>
@@ -240,8 +240,8 @@
 import { ref, onMounted, provide } from "vue";
 import collect from "collect.js";
 import SelRbacRole_search from "src/components/SelRbacRole_search.vue";
-import SelRbacRole_alertCreate from "src/components/SelRbacRole_alertCreate.vue";
-import SelRbacRole_alertEdit from "src/components/SelRbacRole_alertEdit.vue";
+import ChkRbacRole_alertCreate from "src/components/ChkRbacRole_alertCreate.vue";
+import ChkRbacRole_alertEdit from "src/components/ChkRbacRole_alertEdit.vue";
 import {
   loadingNotify,
   successNotify,
@@ -325,8 +325,14 @@ let rbacRoleUuids_alertEditRbacPermission = ref([]);
 let currentUuid = ref("");
 
 provide("rbacRoleUuid_search", rbacRoleUuid_search);
-provide("rbacRoleUuids_alertCreate", rbacRoleUuids_alertCreateRbacPermission);
-provide("rbacRoleUuids_alertEdit", rbacRoleUuids_alertEditRbacPermission);
+provide(
+  "checkedRbacRoleUuids_alertCreate",
+  rbacRoleUuids_alertCreateRbacPermission
+);
+provide(
+  "checkedRbacRoleUuids_alertEdit",
+  rbacRoleUuids_alertEditRbacPermission
+);
 
 onMounted(() => {
   fnInit();
@@ -365,11 +371,7 @@ let fnSearch = () => {
             name: rbacPermission.name,
             uri: rbacPermission.uri,
             description: rbacPermission.description,
-            rbacRoles: {
-              name: collect(rbacPermission.rbac_roles)
-                .pluck("name")
-                .implode(","),
-            },
+            rbacRoles: rbacPermission.rbac_roles || [],
             operation: { uuid: rbacPermission.uuid },
           });
         });

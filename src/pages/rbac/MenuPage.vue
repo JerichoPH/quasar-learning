@@ -241,14 +241,7 @@
                 }"
                 class="q-mt-md"
               />
-              <ChkRbacRole_alertEdit
-                labelName="所属角色"
-                :ajaxParams="{
-                  '__prefloads__[]': ['RbacRoles'],
-                  uuid: currentUuid,
-                }"
-                class="q-mt-md"
-              />
+              <ChkRbacRole_alertEdit labelName="所属角色" class="q-mt-md" />
             </div>
           </div>
         </q-form>
@@ -350,7 +343,6 @@ let description_search = ref("");
 let parentUuid_search = ref("");
 let selRbacMenu_search_enable = ref(true);
 let rbacRoleUuid_search = ref("");
-let selected = ref("");
 
 // 新建菜单对话框
 let alertCreateRbacMenu = ref(false);
