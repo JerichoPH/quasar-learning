@@ -393,7 +393,6 @@ let fnResetAlertCreateRbacPermission = () => {
  * 打开新建权限对话框
  */
 let fnOpenAlertCreateRbacPermission = () => {
-  fnResetAlertCreateRbacPermission();
   alertCreateRbacPermission.value = true;
 };
 /**
@@ -411,6 +410,7 @@ let fnStoreRbacPermission = () => {
     .then((res) => {
       successNotify(res.msg);
       fnSearch();
+      fnResetAlertCreateRbacPermission();
     })
     .catch((e) => {
       errorNotify(e.msg);
@@ -434,7 +434,6 @@ let fnResetAlertEditRbacPermission = () => {
  */
 let fnOpenAlertEditRbacPermission = (params = {}) => {
   if (!params["uuid"]) return;
-  fnResetAlertEditRbacPermission();
 
   currentUuid.value = params.uuid;
 
@@ -475,6 +474,7 @@ let fnUpdateRbacPermission = () => {
     .then((res) => {
       successNotify(res.msg);
       fnSearch();
+      fnResetAlertEditRbacPermission();
     })
     .catch((e) => {
       errorNotify(e.msg);

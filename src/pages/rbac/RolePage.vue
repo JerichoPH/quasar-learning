@@ -261,7 +261,6 @@ let fnResetAlertCreateRbacRole = () => {
  * 打开新建角色对话框
  */
 let fnOpenAlertCreateRbacRole = () => {
-  fnResetAlertCreateRbacRole();
   alertCreateRbacRole.value = true;
 };
 /**
@@ -276,6 +275,7 @@ let fnStoreRbacRole = () => {
     .then((res) => {
       successNotify(res.msg);
       fnSearch();
+      fnResetAlertCreateRbacRole();
     })
     .catch((e) => {
       errorNotify(e.msg);
@@ -296,7 +296,6 @@ let fnResetAlertEditRbacRole = () => {
 let fnOpenAlertEditRbacRole = (params = {}) => {
   if (!params["uuid"]) return;
 
-  fnResetAlertEditRbacRole();
   currentUuid.value = params.uuid;
 
   ajaxRbacRoleDetail(currentUuid.value)
@@ -322,6 +321,7 @@ let fnUpdateRbacRole = () => {
     .then((res) => {
       successNotify(res.msg);
       fnSearch();
+      fnResetAlertEditRbacRole();
     })
     .catch((e) => {
       errorNotify(e.msg);

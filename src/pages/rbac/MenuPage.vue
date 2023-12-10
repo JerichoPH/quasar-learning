@@ -434,16 +434,6 @@ let fnSearch = () => {
     });
 };
 /**
- * 获取选中的行
- */
-let getSelectedString = () => {
-  return selected.value.length === 0
-    ? ""
-    : `${selected.value.length} record${
-        selected.value.length > 1 ? "s" : ""
-      } selected of ${rows.value.length}`;
-};
-/**
  * 重置新建菜单对话框
  */
 let fnResetAlertCreateRbace = () => {
@@ -457,7 +447,6 @@ let fnResetAlertCreateRbace = () => {
  * 打开新建菜单对话框
  */
 let fnOpenAlertCreateRbacMenu = () => {
-  fnResetAlertCreateRbace();
   alertCreateRbacMenu.value = true;
 };
 /**
@@ -476,6 +465,7 @@ let fnStoreRbacMenu = () => {
     .then((res) => {
       successNotify(res.msg, 500);
       fnSearch();
+      fnResetAlertCreateRbace();
     })
     .catch((err) => {
       errorNotify(err.msg);
@@ -501,10 +491,8 @@ let fnResetAlertEditRbacMenu = () => {
  * @param {{uuid:string}} params 参数
  */
 let fnOpenAlertEditRbacMenu = (params = {}) => {
-  if (!params.hasOwnProperty("uuid")) return;
-  if (!params.uuid) return;
+  if (!params["uuid"]) return;
 
-  fnResetAlertEditRbacMenu();
   currentUuid.value = params.uuid;
 
   ajaxRbacMenuDetail(currentUuid.value, {
@@ -544,6 +532,7 @@ let fnUpdateRbacMenu = () => {
     .then((res) => {
       successNotify(res.msg);
       fnSearch();
+      fnResetAlertEditRbacMenu();
     })
     .catch((e) => {
       errorNotify(e.msg);
