@@ -12,3 +12,8 @@ export let ajaxLogin = params => {
 export let ajaxRegister = params => {
   return api.post(`${urlPrefix}/register`, params);
 };
+
+// 获取当前用户菜单
+export let ajaxGetCurrentAccountMenuList = params => {
+  return api.get(`${urlPrefix}/getMenus`, params);
+};

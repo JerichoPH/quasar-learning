@@ -85,7 +85,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered :width="240">
+    <!-- <q-drawer v-model="leftDrawerOpen" show-if-above bordered :width="240">
       <q-scroll-area class="fit">
         <q-list padding>
           <q-item v-for="link in links1" :key="link.text" v-ripple clickable>
@@ -162,7 +162,8 @@
           </div>
         </q-list>
       </q-scroll-area>
-    </q-drawer>
+    </q-drawer> -->
+    <left-drawer />
 
     <q-page-container>
       <router-view />
@@ -171,12 +172,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, provide } from "vue";
 import { Dark } from "quasar";
+import { LeftDrawer } from "src/components/LeftDrawer.vue";
 import { fabYoutube } from "@quasar/extras/fontawesome-v6";
 import { errorNotify } from "src/utils/notify";
 
 let leftDrawerOpen = ref(false);
+provide("leftDrawerOpen", leftDrawerOpen);
 let search = ref("");
 let links1 = ref([
   { icon: "home", text: "Home" },
