@@ -86,6 +86,49 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered :width="240">
+      <div class="q-pa-md">
+        <div class="text-h6">Menu</div>
+
+        <q-list link dense separator style="min-width: 200px">
+          <q-item clickable v-ripple :to="{ name: 'account:index' }">
+            <q-item-section avatar>
+              <q-icon name="help_outline" />
+            </q-item-section>
+            <q-item-section>关于</q-item-section>
+          </q-item>
+        </q-list>
+
+        <q-list link dense separator style="min-width: 200px">
+          <q-item clickable v-ripple :to="{ name: 'account:index' }">
+            <q-item-section avatar>
+              <q-icon name="help_outline" />
+            </q-item-section>
+            <q-item-section>关于</q-item-section>
+          </q-item>
+
+          <q-item-label header>层级菜单</q-item-label>
+
+          <q-expansion-item group="menu" icon="mail" label="邮件">
+            <q-list dense>
+              <q-item clickable v-ripple :to="{ name: 'home:index' }">
+                <q-item-section avatar>
+                  <q-icon name="inbox" />
+                </q-item-section>
+                <q-item-section>Inbox</q-item-section>
+              </q-item>
+              <q-item clickable v-ripple :to="{ name: 'Sent' }">
+                <q-item-section avatar>
+                  <q-icon name="send" />
+                </q-item-section>
+                <q-item-section>Sent</q-item-section>
+              </q-item>
+            </q-list>
+          </q-expansion-item>
+
+          <!-- 添加更多层级菜单... -->
+        </q-list>
+      </div>
+
       <q-scroll-area class="fit">
         <q-list padding>
           <q-item
@@ -93,7 +136,7 @@
             :key="rbacMenu.uuid"
             v-ripple
             clickable
-            @click="fnHref(rbacMenu.uri)"
+            :to="{ name: rbacMenu.page_route_name }"
           >
             <q-item-section avatar>
               <q-icon color="grey" :name="rbacMenu.icon || 'fa fa-list'" />

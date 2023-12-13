@@ -13,30 +13,30 @@ const routes = [
   {
     path: "/",
     component: () => MainLayoutVue,
-    children: [{ path: "", component: IndexPage }],
+    children: [{ path: "", name: "home:index", component: IndexPage }],
   },
   {
     path: "/auth",
     component: () => AuthLayoutVue,
     children: [
-      { path: "login", component: LoginPage },
-      { path: "register", component: RegisterPage },
+      { path: "login", name: "auth:login", component: LoginPage },
+      { path: "register", name: "auth:register", component: RegisterPage },
     ],
   },
   {
     path: "/account",
     component: () => MainLayoutVue,
     children: [
-      { path: "", component: AccountPage },
+      { path: "", name: "account:index", component: AccountPage },
     ],
   },
   {
     path: "/rbac",
     component: () => MainLayoutVue,
     children: [
-      { path: "role", component: RbacRolePage },
-      { path: "permission", component: RbacPermissionPage },
-      { path: "menu", component: RbacMenuPage },
+      { path: "role", name: "rbacRole:index", component: RbacRolePage },
+      { path: "permission", name: "rbacPermission:index", component: RbacPermissionPage },
+      { path: "menu", name: "rbacMenu:index", component: RbacMenuPage },
     ],
   },
   // Always leave this as last one,
