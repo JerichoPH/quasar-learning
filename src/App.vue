@@ -3,6 +3,7 @@
 </template>
 
 <script setup>
-import { Dark } from "quasar";
-Dark.set(true);
+import { useQuasar } from "quasar";
+const $q = useQuasar();
+$q.dark.set(true);
 </script>

@@ -1,4 +1,4 @@
-import api from 'src/apis/api';
+import { api } from "src/boot/axios";
 
 let urlPrefix = '/account';
 

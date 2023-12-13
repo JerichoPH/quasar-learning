@@ -34,6 +34,7 @@ module.exports = configure(function (/* ctx */) {
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
+      'fontawesome-v6',
       // 'ionicons-v4',
       // 'mdi-v5',
       // 'fontawesome-v6',
@@ -85,8 +86,10 @@ module.exports = configure(function (/* ctx */) {
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
     framework: {
+      iconSet: 'fontawesome-v6',
+      lang: 'zh-CN',
       config: {
-        brand: {
+        dark: {
           primary: '#1976d2',
           secondary: '#26A69A',
           accent: '#9C27B0',
@@ -112,7 +115,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ["Notify", "LoadingBar", "Dark"],
+      plugins: ["Notify", "LoadingBar", "Dark", "AddressbarColor"],
     },
 
     // animations: 'all', // --- includes all animations

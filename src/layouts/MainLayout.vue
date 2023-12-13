@@ -85,6 +85,26 @@
       </q-toolbar>
     </q-header>
 
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered :width="240">
+      <q-scroll-area class="fit">
+        <q-list padding>
+          <q-item
+            v-for="rbacMenu in rbacMenus"
+            :key="rbacMenu.uuid"
+            v-ripple
+            clickable
+            @click="fnHref(rbacMenu.uri)"
+          >
+            <q-item-section avatar>
+              <q-icon color="grey" :name="rbacMenu.icon || 'fa fa-list'" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ rbacMenu.name }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
+    </q-drawer>
     <!-- <q-drawer v-model="leftDrawerOpen" show-if-above bordered :width="240">
       <q-scroll-area class="fit">
         <q-list padding>
@@ -163,7 +183,6 @@
         </q-list>
       </q-scroll-area>
     </q-drawer> -->
-    <left-drawer />
 
     <q-page-container>
       <router-view />
@@ -172,56 +191,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted, provide } from "vue";
-import { Dark } from "quasar";
-import { LeftDrawer } from "src/components/LeftDrawer.vue";
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { fabYoutube } from "@quasar/extras/fontawesome-v6";
 import { errorNotify } from "src/utils/notify";
+import { ajaxGetCurrentAccountMenuList } from "src/apis/auth";
 
-let leftDrawerOpen = ref(false);
-provide("leftDrawerOpen", leftDrawerOpen);
+let router = useRouter();
+
+// 搜索栏数据
 let search = ref("");
-let links1 = ref([
-  { icon: "home", text: "Home" },
-  { icon: "whatshot", text: "Trending" },
-  { icon: "subscriptions", text: "Subscriptions" },
-]);
-let links2 = ref([
-  { icon: "folder", text: "Library" },
-  { icon: "restore", text: "History" },
-  { icon: "watch_later", text: "Watch later" },
-  { icon: "thumb_up_alt", text: "Liked videos" },
-]);
-let links3 = ref([
-  { icon: fabYoutube, text: "YouTube Premium" },
-  { icon: "local_movies", text: "Movies & Shows" },
-  { icon: "videogame_asset", text: "Gaming" },
-  { icon: "live_tv", text: "Live" },
-]);
-let links4 = ref([
-  { icon: "settings", text: "Settings" },
-  { icon: "flag", text: "Report history" },
-  { icon: "help", text: "Help" },
-  { icon: "feedback", text: "Send feedback" },
-]);
-let buttons1 = ref([
-  { text: "About" },
-  { text: "Press" },
-  { text: "Copyright" },
-  { text: "Contact us" },
-  { text: "Creators" },
-  { text: "Advertise" },
-  { text: "Developers" },
-]);
-let buttons2 = ref([
-  { text: "Terms" },
-  { text: "Privacy" },
-  { text: "Policy & Safety" },
-  { text: "Test new features" },
-]);
+
+// 做侧边栏数据
+let leftDrawerOpen = ref(true);
+let rbacMenus = ref([]);
 
 onMounted(() => {
-  Dark.set("auto");
   fnInit();
 });
 
@@ -236,15 +221,36 @@ let fnInit = () => {
       (router) => {
         router.push("/auth/login");
       },
-      this.$router
+      router
     );
   }
+
+  // 加载当前用户菜单
+  ajaxGetCurrentAccountMenuList({
+    "__preloads__[]": ["Subs"],
+  })
+    .then((res) => {
+      if (res.content.rbac_menus.length > 0) {
+        rbacMenus.value = res.content.rbac_menus;
+      }
+    })
+    .catch((e) => {
+      errorNotify(e.msg);
+    });
 };
 /**
  * 切换左侧边栏
  */
 let fnToggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+};
+
+/**
+ * 跳转页面
+ * @param {string} uri 路由
+ */
+let fnHref = (uri) => {
+  router.push(uri);
 };
 </script>
 

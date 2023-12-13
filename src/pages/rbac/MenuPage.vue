@@ -95,13 +95,14 @@
                   <q-td key="description" :props="props">
                     {{ props.row.description }}
                   </q-td>
-                  <q-td key="parentName" :props="props">
+                  <q-td><q-icon :name="props.row.icon" /></q-td>
+                  <q-td key="parent" :props="props">
                     <q-chip
                       color="primary"
                       text-color="white"
-                      v-if="props.row.parentName"
+                      v-if="props.row.parent"
                     >
-                      {{ props.row.parentName }}
+                      {{ props.row.parent.name }}
                     </q-chip>
                   </q-td>
                   <q-td key="rbacRoles" :props="props">
@@ -159,7 +160,6 @@
                 v-model="name_alertCreateRbacMenu"
                 label="名称"
                 :rules="[]"
-                class="q-mb-md"
               />
               <q-input
                 outlined
@@ -168,7 +168,7 @@
                 v-model="uri_alertCreateRbacMenu"
                 label="路由"
                 :rules="[]"
-                class="q-mb-md"
+                class="q-mt-md"
               />
               <q-input
                 outlined
@@ -177,10 +177,19 @@
                 v-model="description_alertCreateRbacMenu"
                 label="描述"
                 :rules="[]"
-                class="q-mb-md"
+                class="q-mt-md"
               />
-              <SelRbacMenu_alertCreate labelName="所属父级" class="q-mb-md" />
-              <ChkRbacRole_alertCreate labelName="所属角色" />
+              <q-input
+                outlined
+                clearable
+                lazy-rules
+                v-model="icon_alertCreateRbacMenu"
+                label="图标"
+                :rules="[]"
+                class="q-mt-md"
+              />
+              <SelRbacMenu_alertCreate labelName="所属父级" class="q-mt-md" />
+              <ChkRbacRole_alertCreate labelName="所属角色" class="q-mt-md" />
             </div>
           </div>
         </q-form>
@@ -230,6 +239,15 @@
                 lazy-rules
                 v-model="description_alertEditRbacMenu"
                 label="描述"
+                :rules="[]"
+                class="q-mt-md"
+              />
+              <q-input
+                outlined
+                clearable
+                lazy-rules
+                v-model="icon_alertEditRbacMenu"
+                label="图标"
                 :rules="[]"
                 class="q-mt-md"
               />
@@ -285,26 +303,9 @@ import {
 
 // 表格数据
 let columns = [
-  {
-    name: "index",
-    label: "#",
-    field: "index",
-    align: "left",
-  },
-  {
-    name: "name",
-    field: "name",
-    label: "名称",
-    align: "left",
-    sortable: true,
-  },
-  {
-    name: "uri",
-    field: "uri",
-    label: "路由",
-    align: "left",
-    sortable: true,
-  },
+  { name: "index", label: "#", field: "index", align: "left" },
+  { name: "name", field: "name", label: "名称", align: "left", sortable: true },
+  { name: "uri", field: "uri", label: "路由", align: "left", sortable: true },
   {
     name: "description",
     field: "description",
@@ -312,9 +313,10 @@ let columns = [
     align: "left",
     sortable: true,
   },
+  { name: "icon", field: "icon", label: "图标", align: "left", sortable: true },
   {
-    name: "parentName",
-    field: "parentName",
+    name: "parent",
+    field: "parent",
     label: "所属父级",
     align: "left",
     sortable: true,
@@ -349,6 +351,7 @@ let alertCreateRbacMenu = ref(false);
 let name_alertCreateRbacMenu = ref("");
 let uri_alertCreateRbacMenu = ref("");
 let description_alertCreateRbacMenu = ref("");
+let icon_alertCreateRbacMenu = ref("");
 let parentUuid_alertCreateRbacMenu = ref("");
 let rbacRoleUuids_alertCreateRbacMenu = ref([]);
 
@@ -359,6 +362,7 @@ let currentUuid = ref("");
 let name_alertEditRbacMenu = ref("");
 let uri_alertEditRbacMenu = ref("");
 let description_alertEditRbacMenu = ref("");
+let icon_alertEditRbacMenu = ref("");
 let parentUuid_alertEditRbacMenu = ref("");
 let rbacRoleUuids_alertEditRbacMenu = ref([]);
 
@@ -410,7 +414,8 @@ let fnSearch = () => {
             name: rbacMenu.name,
             uri: rbacMenu.uri,
             description: rbacMenu.description,
-            parentName: rbacMenu.parent,
+            icon: rbacMenu.icon,
+            parent: rbacMenu.parent,
             rbacRoles: rbacMenu.rbac_roles || [],
             operation: { uuid: rbacMenu.uuid },
           });
@@ -432,6 +437,7 @@ let fnResetAlertCreateRbace = () => {
   name_alertCreateRbacMenu.value = "";
   uri_alertCreateRbacMenu.value = "";
   description_alertCreateRbacMenu.value = "";
+  icon_alertCreateRbacMenu.value = "";
   parentUuid_alertCreateRbacMenu.value = "";
   rbacRoleUuids_alertCreateRbacMenu.value = [];
 };
@@ -451,6 +457,7 @@ let fnStoreRbacMenu = () => {
     name: name_alertCreateRbacMenu.value,
     uri: uri_alertCreateRbacMenu.value,
     description: description_alertCreateRbacMenu.value,
+    icon: icon_alertCreateRbacMenu.value,
     parent_uuid: parentUuid_alertCreateRbacMenu.value,
     rbac_role_uuids: rbacRoleUuids_alertCreateRbacMenu.value,
   })
@@ -475,6 +482,7 @@ let fnResetAlertEditRbacMenu = () => {
   name_alertEditRbacMenu.value = "";
   uri_alertEditRbacMenu.value = "";
   description_alertEditRbacMenu.value = "";
+  icon_alertEditRbacMenu.value = "";
   parentUuid_alertEditRbacMenu.value = "";
   rbacRoleUuids_alertEditRbacMenu.value = [];
 };
@@ -494,6 +502,7 @@ let fnOpenAlertEditRbacMenu = (params = {}) => {
       name_alertEditRbacMenu.value = res.content.rbac_menu.name;
       uri_alertEditRbacMenu.value = res.content.rbac_menu.uri;
       description_alertEditRbacMenu.value = res.content.rbac_menu.description;
+      icon_alertEditRbacMenu.value = res.content.rbac_menu.icon;
       parentUuid_alertEditRbacMenu.value = res.content.rbac_menu.parent
         ? res.content.rbac_menu.parent.uuid
         : "";
@@ -518,6 +527,7 @@ let fnUpdateRbacMenu = () => {
     name: name_alertEditRbacMenu.value,
     uri: uri_alertEditRbacMenu.value,
     description: description_alertEditRbacMenu.value,
+    icon: icon_alertEditRbacMenu.value,
     parent_uuid: parentUuid_alertEditRbacMenu.value,
     rbac_role_uuids: rbacRoleUuids_alertEditRbacMenu.value,
   })

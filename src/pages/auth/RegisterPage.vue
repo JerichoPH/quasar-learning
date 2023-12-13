@@ -66,70 +66,64 @@
   </q-page>
 </template>
 
-<script>
-import { defineComponent } from "vue";
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { loadingNotify, successNotify, errorNotify } from "src/utils/notify.js";
 import { ajaxRegister } from "src/apis/auth.js";
 
-export default defineComponent({
-  name: "RegisterPage",
+let router = useRouter();
+let username = ref("admin");
+let nickname = ref("管理员");
+let password = ref("123123");
+let passwordConfirmation = ref("123123");
+let accept = ref(true);
 
-  data() {
-    return {
-      username: "admin",
-      nickname: "管理员",
-      password: "123123",
-      passwordConfirmation: "123123",
-      accept: true,
-    };
-  },
-  methods: {
-    /**
-     * 注册
-     */
-    fnRegister() {
-      const loading = loadingNotify("注册中……");
+/**
+ * 注册
+ */
+let fnRegister = () => {
+  const loading = loadingNotify("注册中……");
 
-      ajaxRegister({
-        username: this.username,
-        nickname: this.nickname,
-        password: this.password,
-        passwordConfirmation: this.passwordConfirmation,
-      })
-        .then((res) => {
-          loading();
-          successNotify(
-            res.msg,
-            500,
-            (router) => {
-              router.push("/auth/login");
-            },
-            this.$router
-          );
-        })
-        .catch((e) => {
-          loading();
-          errorNotify(e.msg, 5000);
-        });
-    },
-    /**
-     * 重置表单
-     */
-    fnReset() {
-      this.username = "";
-      this.nickname = "";
-      this.password = "";
-      this.passwordConfirmation = "";
-      this.accept = false;
-    },
-    /**
-     * 跳转页面
-     * @param {string} path
-     */
-    fnHrefTo(path) {
-      if (path) this.$router.push(path);
-    },
-  },
-});
+  ajaxRegister({
+    username: username.value,
+    nickname: nickname.value,
+    password: password.value,
+    password_confirmation: passwordConfirmation.value,
+  })
+    .then((res) => {
+      loading();
+      successNotify(
+        res.msg,
+        500,
+        (router) => {
+          router.push("/auth/login");
+        },
+        router
+      );
+    })
+    .catch((e) => {
+      loading();
+      errorNotify(e.msg, 5000);
+    });
+};
+
+/**
+ * 重置表单
+ */
+let fnReset = () => {
+  username.value = "";
+  nickname.value = "";
+  password.value = "";
+  passwordConfirmation.value = "";
+  accept.value = false;
+};
+/**
+ * 跳转页面
+ * @param {string} path
+ */
+let fnHrefTo = (path) => {
+  if (path) this.$router.push(path);
+};
 </script>
 ../../utils/notify.js

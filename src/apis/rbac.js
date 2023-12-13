@@ -1,4 +1,4 @@
-import api from "./api";
+import { api } from "src/boot/axios";
 
 let urlPrefix = '/rbac';
 
