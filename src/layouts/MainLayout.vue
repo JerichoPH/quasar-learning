@@ -86,147 +86,48 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered :width="240">
-      <div class="q-pa-md">
-        <div class="text-h6">Menu</div>
-
-        <q-list link dense separator style="min-width: 200px">
-          <q-item clickable v-ripple :to="{ name: 'account:index' }">
-            <q-item-section avatar>
-              <q-icon name="help_outline" />
-            </q-item-section>
-            <q-item-section>关于</q-item-section>
-          </q-item>
-        </q-list>
-
-        <q-list link dense separator style="min-width: 200px">
-          <q-item clickable v-ripple :to="{ name: 'account:index' }">
-            <q-item-section avatar>
-              <q-icon name="help_outline" />
-            </q-item-section>
-            <q-item-section>关于</q-item-section>
-          </q-item>
-
-          <q-item-label header>层级菜单</q-item-label>
-
-          <q-expansion-item group="menu" icon="mail" label="邮件">
-            <q-list dense>
-              <q-item clickable v-ripple :to="{ name: 'home:index' }">
-                <q-item-section avatar>
-                  <q-icon name="inbox" />
-                </q-item-section>
-                <q-item-section>Inbox</q-item-section>
-              </q-item>
-              <q-item clickable v-ripple :to="{ name: 'Sent' }">
-                <q-item-section avatar>
-                  <q-icon name="send" />
-                </q-item-section>
-                <q-item-section>Sent</q-item-section>
-              </q-item>
-            </q-list>
-          </q-expansion-item>
-
-          <!-- 添加更多层级菜单... -->
-        </q-list>
-      </div>
-
       <q-scroll-area class="fit">
-        <q-list padding>
-          <q-item
-            v-for="rbacMenu in rbacMenus"
-            :key="rbacMenu.uuid"
-            v-ripple
-            clickable
-            :to="{ name: rbacMenu.page_route_name }"
-          >
-            <q-item-section avatar>
-              <q-icon color="grey" :name="rbacMenu.icon || 'fa fa-list'" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ rbacMenu.name }}</q-item-label>
-            </q-item-section>
-          </q-item>
+        <q-list link dense separator style="min-width: 200px">
+          <template v-for="rbacMenu in rbacMenus" :key="rbacMenu.uuid">
+            <template v-if="rbacMenu.subs.length > 0">
+              <q-expansion-item
+                group="menu"
+                :icon="rbacMenu.icon"
+                :label="rbacMenu.name"
+              >
+                <q-list dense>
+                  <q-item
+                    v-for="subMenu in rbacMenu.subs"
+                    clickable
+                    v-ripple
+                    :key="subMenu.uuid"
+                    @click="fnHref(subMenu.uri)"
+                  >
+                    <q-item-section avatar>
+                      <q-icon :name="subMenu.icon" />
+                    </q-item-section>
+                    <q-item-section>{{ subMenu.name }}</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-expansion-item>
+            </template>
+            <template v-else>
+              <q-item
+                clickable
+                v-ripple
+                @click="fnHref(rbacMenu.uri)"
+                :key="rbacMenu.uuid"
+              >
+                <q-item-section avatar>
+                  <q-icon :name="rbacMenu.icon" />
+                </q-item-section>
+                <q-item-section>{{ rbacMenu.name }}</q-item-section>
+              </q-item>
+            </template>
+          </template>
         </q-list>
       </q-scroll-area>
     </q-drawer>
-    <!-- <q-drawer v-model="leftDrawerOpen" show-if-above bordered :width="240">
-      <q-scroll-area class="fit">
-        <q-list padding>
-          <q-item v-for="link in links1" :key="link.text" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-my-md" />
-
-          <q-item v-for="link in links2" :key="link.text" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-mt-md q-mb-xs" />
-
-          <q-item-label header class="text-weight-bold text-uppercase">
-            More from Youtube
-          </q-item-label>
-
-          <q-item v-for="link in links3" :key="link.text" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-my-md" />
-
-          <q-item v-for="link in links4" :key="link.text" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-mt-md q-mb-lg" />
-
-          <div class="q-px-md text-grey-9">
-            <div class="row items-center q-gutter-x-sm q-gutter-y-xs">
-              <a
-                v-for="button in buttons1"
-                :key="button.text"
-                class="YL__drawer-footer-link"
-                href="javascript:void(0)"
-              >
-                {{ button.text }}
-              </a>
-            </div>
-          </div>
-          <div class="q-py-md q-px-md text-grey-9">
-            <div class="row items-center q-gutter-x-sm q-gutter-y-xs">
-              <a
-                v-for="button in buttons2"
-                :key="button.text"
-                class="YL__drawer-footer-link"
-                href="javascript:void(0)"
-              >
-                {{ button.text }}
-              </a>
-            </div>
-          </div>
-        </q-list>
-      </q-scroll-area>
-    </q-drawer> -->
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -271,6 +172,7 @@ let fnInit = () => {
   // 加载当前用户菜单
   ajaxGetCurrentAccountMenuList({
     "__preloads__[]": ["Subs"],
+    "__eq_empty__[]": ["parent_uuid"],
   })
     .then((res) => {
       if (res.content.rbac_menus.length > 0) {

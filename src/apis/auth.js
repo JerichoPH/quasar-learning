@@ -15,5 +15,5 @@ export let ajaxRegister = params => {
 
 // 获取当前用户菜单
 export let ajaxGetCurrentAccountMenuList = params => {
-  return api.get(`${urlPrefix}/menus`, params);
+  return api.get(`${urlPrefix}/menus`, { params });
 };
