@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-card>
       <q-card-section>
-        <div class="q-mb-md">
+        <div class="row q-mb-md">
           <div class="col"><span style="font-size: 20px">搜索</span></div>
           <div class="col text-right">
             <q-btn-group>
@@ -25,7 +25,7 @@
         <div class="row">
           <div class="col">
             <q-form>
-              <div class="row q-pb-sm q-col-gutter-sm">
+              <div class="row q-col-gutter-sm">
                 <div class="col-3">
                   <q-input
                     outlined
@@ -34,7 +34,6 @@
                     v-model="username_search"
                     label="账号"
                     :rules="[]"
-                    class="q-mb-md"
                   />
                 </div>
                 <div class="col-3">
@@ -45,7 +44,6 @@
                     v-model="nickname_search"
                     label="昵称"
                     :rules="[]"
-                    class="q-mb-md"
                   />
                 </div>
                 <div class="col-3">

@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-card>
       <q-card-section>
-        <div class="row margin-top-1">
+        <div class="row q-mb-md">
           <div class="col"><span style="font-size: 20px">搜索</span></div>
           <div class="col text-right">
             <q-btn-group>
@@ -22,10 +22,10 @@
             </q-btn-group>
           </div>
         </div>
-        <div class="row margin-top-1">
+        <div class="row">
           <div class="col">
             <q-form>
-              <div class="row q-pb-sm q-col-gutter-sm">
+              <div class="row q-col-gutter-sm">
                 <div class="col-3">
                   <q-input
                     outlined
